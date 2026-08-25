@@ -1,20 +1,20 @@
 import express from 'express'
 import { Router } from 'express'
 import { generateText } from 'ai';
+import {processRepo} from '../services/repository'
 const agentRouter = Router()
 agentRouter.use(express.json())
 import path from 'path'
-agentRouter.post('/agent',async function(req,res){
+agentRouter.post('/',async function(req,res){
     const repository = req.body.repository
     if(!repository){
         return res.json({
             msg : 'repository is required'
         })
     }
-    const url = new URL(repository)
-    const part1 = url.pathname.split('/').filter(Boolean)
-    const owner = part1[0]
-    const repo = part1[1]
+  
+    const repodata = await processRepo(repository)
+    console.log(repodata.tree);
     try{
 const { text } = await generateText({
   model: 'openai/gpt-5.2',
@@ -35,10 +35,11 @@ Explain:
 Do not invent code or files that you cannot access.
       `,
 });
+
 return res.json({
-    owner,
-    repo,
-    repository,
+    owner: repodata.owner,
+    repo : repodata.repo,
+    repository : repodata.repository,
     analysis : text,
 })}catch (error) {
     console.error(error);

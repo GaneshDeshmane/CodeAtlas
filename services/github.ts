@@ -74,11 +74,3 @@ export async function fileContent(owner :string,repo:string,branch:string,path:s
         size: data.size
     }
 }
-const file = await fileContent(
-    "GaneshDeshmane",
-    "llm-orchestrator",
-    "main",
-    "Frontend/index.html"
-)
-
-console.log(file)
