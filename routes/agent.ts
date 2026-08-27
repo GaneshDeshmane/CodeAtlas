@@ -5,6 +5,7 @@ import {processRepo} from '../services/repository'
 const agentRouter = Router()
 agentRouter.use(express.json())
 import path from 'path'
+import { file } from 'bun';
 agentRouter.post('/',async function(req,res){
     const repository = req.body.repository
     if(!repository){
@@ -15,6 +16,7 @@ agentRouter.post('/',async function(req,res){
   
     const repodata = await processRepo(repository)
     console.log(repodata.tree);
+    console.log(repodata.files);
     try{
 const { text } = await generateText({
   model: 'openai/gpt-5.2',
@@ -41,6 +43,7 @@ return res.json({
     repo : repodata.repo,
     repository : repodata.repository,
     analysis : text,
+    files : repodata.files
 })}catch (error) {
     console.error(error);
 
@@ -49,4 +52,5 @@ return res.json({
     });
   }
 })
+
 export default agentRouter

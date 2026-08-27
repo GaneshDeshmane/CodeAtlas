@@ -42,18 +42,20 @@ type githubTreestr = {
     type : "blob" | "tree",
     sha : string
 }
-type githubTreestrre={
-    tree : githubTreestr[]
-}
+//type githubTreestrre={
+  //  tree : githubTreestr[]
+//}
 export async function githubTree(owner:string , repo : string , branch : string) {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`)
-    const data = await response.json() as githubTreestrre
-    const files =data.tree.filter(
-        (item)=>item.type==="blob"
-    )
-    return files  
+    const data = await response.json() //as githubTreestrre
+    //const files =data.tree.filter(
+      //  (item)=>item.type==="blob"
+    //)
+    console.log(data)
+    //return files 
+    return []
 }
-type GitHubFileResponse = {
+export type GitHubFileResponse = {
     name: string;
     path: string;
     sha: string;
@@ -67,7 +69,6 @@ export async function fileContent(owner :string,repo:string,branch:string,path:s
     const htmldata = data.content
     const decoded=Uint8Array.fromBase64(htmldata)
     const html=new TextDecoder().decode(decoded)
-
     return{
         path: data.path,
         content: html,
