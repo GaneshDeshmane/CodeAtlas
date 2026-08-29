@@ -36,24 +36,29 @@ export  async function githubMetadata(owner:string,repo:string) {
     })
 }
 
-type githubTreestr = {
+export type githubTreestr = {
     path : string,
     mode : string,
     type : "blob" | "tree",
     sha : string
 }
-//type githubTreestrre={
-  //  tree : githubTreestr[]
-//}
+type githubTreestrre={
+    tree : githubTreestr[]
+}
 export async function githubTree(owner:string , repo : string , branch : string) {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`)
-    const data = await response.json() //as githubTreestrre
+    const data = await response.json() as githubTreestrre
     //const files =data.tree.filter(
       //  (item)=>item.type==="blob"
     //)
-    console.log(data)
-    //return files 
-    return []
+    const files  = data.tree.filter(
+        (item)=>{
+            item.type == "blob"
+        }
+    )
+
+    return files 
+        
 }
 export type GitHubFileResponse = {
     name: string;

@@ -1,29 +1,31 @@
-import {githubParser,githubMetadata,githubTree,fileContent,type GitHubFileResponse} from "./github"
+import {githubParser,githubMetadata,githubTree,fileContent,type GitHubFileResponse , type githubTreestr} from "./github"
 export async function processRepo(repository:string){
      const data = githubParser(repository)
         const owner=  data.owner
         const repo = data.repo
         const metadata = await githubMetadata(owner,repo)
         const githubTreedata = await githubTree(owner,repo,metadata.defaultBranch)
-        const first  = githubTreedata[0]
+        const first  = githubTreedata.files[0]
         if (!first) {
-            throw new Error('file not found')
-        }
-        const files = githubTreedata.slice(0,10)
-        Promise.all(
+           throw new Error('file not found')
+         }
+        const files = githubTreedata.files
+            const contentFile =await Promise.all(
             files.map(file=>fileContent(
-                owner,repo,metadata.defaultBranch,first.path
+                owner,repo,metadata.defaultBranch,file.path
             )
-            
         )
         
         )
-    const filedata=await fileContent(owner,repo,metadata.defaultBranch,first.path as string)
+        if(!contentFile[0]){
+            throw new Error('file have no content')
+        }
+    const filedata=await fileContent(owner,repo,metadata.defaultBranch,contentFile[0].path)
     return{
-        path : filedata.path,
-        content : filedata.content,
-        size : filedata.size,
-        files :filedata,
+        path : contentFile[0].path,
+        content : contentFile[0].content,
+        size : contentFile[0].size,
+        files :contentFile,
         owner,
         repo,
         metadata,

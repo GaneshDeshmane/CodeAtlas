@@ -10,6 +10,8 @@
     "typescript": "^6"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.9",
+    "@langchain/textsplitters": "^1.0.1",
     "@types/express": "^5.0.6",
     "ai": "^7.0.79",
     "express": "^5.2.1"
