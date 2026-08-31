@@ -15,11 +15,13 @@ const splitter = new RecursiveCharacterTextSplitter({
     const content = Currentfile?.content
     const splitterdata=await splitter.splitText(content!)
     const data=splitterdata.map((data)=>{
-        [['chunk' ,data],
-        ['path',path]]
+        return {chunk  : data ,path :  path}
     })
-    console.log(data)
-    chunk.push(data)
+    for (let i = 0; i < data.length; i++) {
+        const eachChunk = data[i]
+        chunk.push(eachChunk)
+    }
+   
 }
-
+    return chunk
 }

@@ -26,7 +26,7 @@ export  async function githubMetadata(owner:string,repo:string) {
     const data = await respo.json() as data
     console.log(data.name)
     console.log(data.default_branch)
-    
+    console.log(data)
     return({
         name:   data.name,
         fullName: data.full_name,
@@ -40,7 +40,7 @@ export type githubTreestr = {
     path : string,
     mode : string,
     type : "blob" | "tree",
-    sha : string
+    sha : string,
 }
 type githubTreestrre={
     tree : githubTreestr[]
@@ -51,14 +51,16 @@ export async function githubTree(owner:string , repo : string , branch : string)
     //const files =data.tree.filter(
       //  (item)=>item.type==="blob"
     //)
-    const files  = data.tree.filter(
-        (item)=>{
-            item.type == "blob"
-        }
-    )
-
-    return files 
-        
+  const files= data.tree.filter(
+    (item)=>
+        item.type=="blob" && item.mode !=="120000"
+  )
+//     const excludeFile=data.tree.filter(
+//         (item)=>(
+//         item.mode==="12000"
+//         )
+//   )
+    return files   
 }
 export type GitHubFileResponse = {
     name: string;
