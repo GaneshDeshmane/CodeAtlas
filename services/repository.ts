@@ -15,20 +15,7 @@ export async function processRepo(repository:string){
             )
         )
         )
-    
-        // const first  = githubTreedata[0]
-        // if (!first) {
-        //    throw new Error('file not found')
-        //  }
-        // const files = first.files
-        //     const contentFile =await Promise.all(
-        //     files.map(file=>fileContent(
-        //         owner,repo,metadata.defaultBranch,file.path
-        //     )
-        // )
-        
-        //)
-     
+
 
         
         if(!contentFile[0]){
@@ -47,3 +34,18 @@ export async function processRepo(repository:string){
         repository
     }
 }
+
+    
+        // const first  = githubTreedata[0]
+        // if (!first) {
+        //    throw new Error('file not found')
+        //  }
+        // const files = first.files
+        //     const contentFile =await Promise.all(
+        //     files.map(file=>fileContent(
+        //         owner,repo,metadata.defaultBranch,file.path
+        //     )
+        // )
+        
+        //)
+     

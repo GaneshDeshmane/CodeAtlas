@@ -21,7 +21,7 @@ const splitter = new RecursiveCharacterTextSplitter({
         const eachChunk = data[i]
         chunk.push(eachChunk)
     }
-   
+    
 }
     return chunk
 }

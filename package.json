@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prisma": "7.10.0"
   },
   "peerDependencies": {
     "typescript": "^6"
@@ -12,9 +13,14 @@
   "dependencies": {
     "@langchain/core": "^1.2.9",
     "@langchain/textsplitters": "^1.0.1",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "@types/express": "^5.0.6",
     "ai": "^7.0.79",
     "dotenv": "^17.4.2",
     "express": "^5.2.1"
+  },
+  "scripts": {
+    "postinstall": "prisma skills sync || exit 0"
   }
 }
