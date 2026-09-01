@@ -14,6 +14,7 @@
     "@langchain/textsplitters": "^1.0.1",
     "@types/express": "^5.0.6",
     "ai": "^7.0.79",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }
 }
