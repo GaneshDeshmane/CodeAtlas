@@ -19,3 +19,13 @@ model repository{
     owner String
     path String
 }
+model embedding{
+  ansid String @id @default(uuid())
+  chat String 
+  ans UserQuery[]
+}
+model UserQuery{
+  id String @id @default(uuid())
+  query String
+  ans embedding @relation(fields: [id],references: [ansid])
+}

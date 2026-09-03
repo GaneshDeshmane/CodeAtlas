@@ -4,8 +4,6 @@ import { generateText } from 'ai';
 import {processRepo} from '../services/repository'
 const agentRouter = Router()
 agentRouter.use(express.json())
-import path from 'path'
-import { file } from 'bun';
 agentRouter.post('/',async function(req,res){
     const repository = req.body.repository
     if(!repository){
