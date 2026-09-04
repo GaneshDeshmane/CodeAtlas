@@ -1,9 +1,11 @@
  generator client {
     provider = "prisma-client"
     output = "../generated/prisma" 
+    previewFeatures = ["postgresqlExtensions"]
   }
   datasource db {
     provider = "postgresql"
+    extensions = [vector]
   }
 //   model User{
 //     id String @id @default(uuid())
@@ -13,19 +15,39 @@
 //     updatedAt DateTime @updatedAt
 //   }
 model repository{
-    id String @id  @default(uuid())
+    id Int @id @default(autoincrement()) @unique
     name String
     url String
     owner String
     path String
+    files files[]
+   
+}
+model files{
+  id Int @id @default(autoincrement()) 
+  fileName String
+  fileContent String
+  repository repository @relation(fields: [repositoryId],references: [id])
+  repositoryId Int
+  chunk chunk[]
+}
+model chunk{
+  chunkId Int @id @default(autoincrement()) 
+  data String
+  position Int
+  files files @relation(fields: [filesId],references:[id])
+  filesId Int
+  embedding embedding?
 }
 model embedding{
-  ansid String @id @default(uuid())
-  chat String 
-  ans UserQuery[]
+  embeddingId Int @id @default(autoincrement()) 
+  data Unsupported("vector(768)")
+  chunk chunk @relation(fields: [chunkId],references:[chunkId])
+  chunkId Int
+
 }
 model UserQuery{
   id String @id @default(uuid())
   query String
-  ans embedding @relation(fields: [id],references: [ansid])
+
 }

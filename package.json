@@ -18,7 +18,8 @@
     "@types/express": "^5.0.6",
     "ai": "^7.0.79",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pgvector": "^0.3.0"
   },
   "scripts": {
     "postinstall": "prisma skills sync || exit 0"
