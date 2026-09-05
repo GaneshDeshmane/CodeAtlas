@@ -17,4 +17,28 @@ import * as Prisma from './internal/prismaNamespaceBrowser.ts'
 export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
-
+/**
+ * Model repository
+ * 
+ */
+export type repository = Prisma.repositoryModel
+/**
+ * Model files
+ * 
+ */
+export type files = Prisma.filesModel
+/**
+ * Model chunk
+ * 
+ */
+export type chunk = Prisma.chunkModel
+/**
+ * Model embedding
+ * 
+ */
+export type embedding = Prisma.embeddingModel
+/**
+ * Model UserQuery
+ * 
+ */
+export type UserQuery = Prisma.UserQueryModel

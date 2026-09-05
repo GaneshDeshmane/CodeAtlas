@@ -16,11 +16,13 @@ import type * as Prisma from "./prismaNamespace.ts"
 
 
 const config: runtime.GetPrismaClientConfig = {
-  "previewFeatures": [],
+  "previewFeatures": [
+    "postgresqlExtensions"
+  ],
   "clientVersion": "7.10.0",
   "engineVersion": "0edf323efd1d98336f3f0a68684b56f689b900d3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n",
+  "inlineSchema": "generator client {\n  provider        = \"prisma-client\"\n  output          = \"../generated/prisma\"\n  previewFeatures = [\"postgresqlExtensions\"]\n}\n\ndatasource db {\n  provider   = \"postgresql\"\n  extensions = [vector]\n}\n\n//   model User{\n//     id String @id @default(uuid())\n//     email String @unique\n//     password String\n//     createdAt DateTime @default(now())\n//     updatedAt DateTime @updatedAt\n//   }\nmodel repository {\n  id    Int     @id @default(autoincrement())\n  name  String\n  url   String\n  owner String\n  path  String\n  files files[]\n}\n\nmodel files {\n  id           Int        @id @default(autoincrement())\n  fileName     String\n  fileContent  String\n  repository   repository @relation(fields: [repositoryId], references: [id])\n  repositoryId Int\n  chunk        chunk[]\n}\n\nmodel chunk {\n  chunkId   Int        @id @default(autoincrement())\n  data      String\n  position  Int\n  files     files      @relation(fields: [filesId], references: [id])\n  filesId   Int\n  embedding embedding?\n}\n\nmodel embedding {\n  embeddingId Int                        @id @default(autoincrement())\n  data        Unsupported(\"vector(768)\")\n  chunk       chunk                      @relation(fields: [chunkId], references: [chunkId])\n  chunkId     Int                        @unique\n}\n\nmodel UserQuery {\n  id    String @id @default(uuid())\n  query String\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -32,10 +34,10 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"repository\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"url\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"owner\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"path\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"files\",\"kind\":\"object\",\"type\":\"files\",\"relationName\":\"filesTorepository\"}],\"dbName\":null,\"schema\":null},\"files\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"fileName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"fileContent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"repository\",\"kind\":\"object\",\"type\":\"repository\",\"relationName\":\"filesTorepository\"},{\"name\":\"repositoryId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"chunk\",\"kind\":\"object\",\"type\":\"chunk\",\"relationName\":\"chunkTofiles\"}],\"dbName\":null,\"schema\":null},\"chunk\":{\"fields\":[{\"name\":\"chunkId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"position\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"files\",\"kind\":\"object\",\"type\":\"files\",\"relationName\":\"chunkTofiles\"},{\"name\":\"filesId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"embedding\",\"kind\":\"object\",\"type\":\"embedding\",\"relationName\":\"chunkToembedding\"}],\"dbName\":null,\"schema\":null},\"embedding\":{\"fields\":[{\"name\":\"embeddingId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"chunk\",\"kind\":\"object\",\"type\":\"chunk\",\"relationName\":\"chunkToembedding\"},{\"name\":\"chunkId\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null,\"schema\":null},\"UserQuery\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"query\",\"kind\":\"scalar\",\"type\":\"String\"}],\"dbName\":null,\"schema\":null}},\"enums\":{},\"types\":{}}")
 config.parameterizationSchema = {
-  strings: JSON.parse("[]"),
-  graph: "AAAA"
+  strings: JSON.parse("[\"where\",\"orderBy\",\"cursor\",\"repository\",\"files\",\"chunk\",\"embedding\",\"_count\",\"repository.findUnique\",\"repository.findUniqueOrThrow\",\"repository.findFirst\",\"repository.findFirstOrThrow\",\"repository.findMany\",\"data\",\"repository.createOne\",\"repository.createMany\",\"repository.createManyAndReturn\",\"repository.updateOne\",\"repository.updateMany\",\"repository.updateManyAndReturn\",\"create\",\"update\",\"repository.upsertOne\",\"repository.deleteOne\",\"repository.deleteMany\",\"having\",\"_avg\",\"_sum\",\"_min\",\"_max\",\"repository.groupBy\",\"repository.aggregate\",\"files.findUnique\",\"files.findUniqueOrThrow\",\"files.findFirst\",\"files.findFirstOrThrow\",\"files.findMany\",\"files.createOne\",\"files.createMany\",\"files.createManyAndReturn\",\"files.updateOne\",\"files.updateMany\",\"files.updateManyAndReturn\",\"files.upsertOne\",\"files.deleteOne\",\"files.deleteMany\",\"files.groupBy\",\"files.aggregate\",\"chunk.findUnique\",\"chunk.findUniqueOrThrow\",\"chunk.findFirst\",\"chunk.findFirstOrThrow\",\"chunk.findMany\",\"chunk.createOne\",\"chunk.createMany\",\"chunk.createManyAndReturn\",\"chunk.updateOne\",\"chunk.updateMany\",\"chunk.updateManyAndReturn\",\"chunk.upsertOne\",\"chunk.deleteOne\",\"chunk.deleteMany\",\"chunk.groupBy\",\"chunk.aggregate\",\"embedding.findUnique\",\"embedding.findUniqueOrThrow\",\"embedding.findFirst\",\"embedding.findFirstOrThrow\",\"embedding.findMany\",\"embedding.updateOne\",\"embedding.updateMany\",\"embedding.updateManyAndReturn\",\"embedding.deleteOne\",\"embedding.deleteMany\",\"embedding.groupBy\",\"embedding.aggregate\",\"UserQuery.findUnique\",\"UserQuery.findUniqueOrThrow\",\"UserQuery.findFirst\",\"UserQuery.findFirstOrThrow\",\"UserQuery.findMany\",\"UserQuery.createOne\",\"UserQuery.createMany\",\"UserQuery.createManyAndReturn\",\"UserQuery.updateOne\",\"UserQuery.updateMany\",\"UserQuery.updateManyAndReturn\",\"UserQuery.upsertOne\",\"UserQuery.deleteOne\",\"UserQuery.deleteMany\",\"UserQuery.groupBy\",\"UserQuery.aggregate\",\"AND\",\"OR\",\"NOT\",\"id\",\"query\",\"equals\",\"in\",\"notIn\",\"lt\",\"lte\",\"gt\",\"gte\",\"contains\",\"startsWith\",\"endsWith\",\"not\",\"embeddingId\",\"chunkId\",\"position\",\"filesId\",\"fileName\",\"fileContent\",\"repositoryId\",\"name\",\"url\",\"owner\",\"path\",\"every\",\"some\",\"none\",\"is\",\"isNot\",\"disconnect\",\"delete\",\"connect\",\"connectOrCreate\",\"upsert\",\"createMany\",\"set\",\"updateMany\",\"deleteMany\",\"increment\",\"decrement\",\"multiply\",\"divide\"]"),
+  graph: "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_ACEIYQIAAAABYgIAAAAEYwIAAAAEZAIAAAABZQIAAAABZgIAAAABZwIAAAABawIAgAEAIQthAQAAAAFiAQAAAARjAQAAAARkAQAAAAFlAQAAAAFmAQAAAAFnAQAAAAFoAQAAAAFpAQAAAAFqAQAAAAFrAQCBAQAhBVwAAIIBADBdAABnABBeAACCAQAwXwEAgwEAIWABAIMBACELYQEAAAABYgEAAAAEYwEAAAAEZAEAAAABZQEAAAABZgEAAAABZwEAAAABaAEAAAABaQEAAAABagEAAAABawEAgQEAIQVcAACEAQAwXQAAYQAQXgAAhAEAMGwCAIUBACFtAgCFAQAhDQcAAIABACAaAACHAQAgGwAAgAEAIBwAAIABACAdAACAAQAgYQIAAAABYgIAAAAEYwIAAAAEZAIAAAABZQIAAAABZgIAAAABZwIAAAABawIAhgEAIQ0HAACAAQAgGgAAhwEAIBsAAIABACAcAACAAQAgHQAAgAEAIGECAAAAAWICAAAABGMCAAAABGQCAAAAAWUCAAAAAWYCAAAAAWcCAAAAAWsCAIYBACEIYQgAAAABYggAAAAEYwgAAAAEZAgAAAABZQgAAAABZggAAAABZwgAAAABawgAhwEAIQYFAACJAQAgXAAAiAEAMF0AAAsAEF4AAIgBADBsAgCOAQAhbQIAjgEAIQsEAACRAQAgBgAAkgEAIA0BAIMBACFcAACQAQAwXQAABwAQXgAAkAEAMG0CAI4BACFuAgCOAQAhbwIAjgEAIXoAAAcAIHsAAAcAIAcNAQB-ACFcAACKAQAwXQAATwAQXgAAigEAMG0CAIUBACFuAgCFAQAhbwIAhQEAIQdcAACLAQAwXQAAOQAQXgAAiwEAMF8CAIUBACFwAQB-ACFxAQB-ACFyAgCFAQAhCFwAAIwBADBdAAAjABBeAACMAQAwXwIAhQEAIXMBAH4AIXQBAH4AIXUBAH4AIXYBAH4AIQkEAACPAQAgXAAAjQEAMF0AABAAEF4AAI0BADBfAgCOAQAhcwEAgwEAIXQBAIMBACF1AQCDAQAhdgEAgwEAIQhhAgAAAAFiAgAAAARjAgAAAARkAgAAAAFlAgAAAAFmAgAAAAFnAgAAAAFrAgCAAQAhA3cAAAMAIHgAAAMAIHkAAAMAIAkEAACRAQAgBgAAkgEAIA0BAIMBACFcAACQAQAwXQAABwAQXgAAkAEAMG0CAI4BACFuAgCOAQAhbwIAjgEAIQsDAACUAQAgBQAAlQEAIFwAAJMBADBdAAADABBeAACTAQAwXwIAjgEAIXABAIMBACFxAQCDAQAhcgIAjgEAIXoAAAMAIHsAAAMAIAgFAACJAQAgXAAAiAEAMF0AAAsAEF4AAIgBADBsAgCOAQAhbQIAjgEAIXoAAAsAIHsAAAsAIAkDAACUAQAgBQAAlQEAIFwAAJMBADBdAAADABBeAACTAQAwXwIAjgEAIXABAIMBACFxAQCDAQAhcgIAjgEAIQsEAACPAQAgXAAAjQEAMF0AABAAEF4AAI0BADBfAgCOAQAhcwEAgwEAIXQBAIMBACF1AQCDAQAhdgEAgwEAIXoAABAAIHsAABAAIAN3AAAHACB4AAAHACB5AAAHACAAAAABggEBAAAAAQAAAAAABYIBAgAAAAGFAQIAAAABhgECAAAAAYcBAgAAAAGIAQIAAAABBRQAAOYBACAVAADpAQAgfgAACQAgfwAA5wEAIIABAADoAQAgAgQAANYBACAGAADXAQAgAAAAAAAFFAAA4QEAIBUAAOQBACB-AAAFACB_AADiAQAggAEAAOMBACAEFQAAqQEAIHwAAAsAIH0AAAsAIH4AAFIAIAMAAAALACANAACqAQAgbAIAnwEAIQFsAgCfAQAhAxQAAOEBACB-AAAFACB_AADiAQAgAX4AAFIAIAAAAAAABRQAANsBACAVAADfAQAgfgAAAQAgfwAA3AEAIIABAADeAQAgCxQAALQBADAVAAC5AQAwfAAAuAEAMH0AALgBADB-AAC4AQAwfwAAtQEAMIABAAC2AQAwgQEAALcBACCCAQAAuAEAMIMBAAC6AQAwhAEAALsBADAEBgAArAEAIA0BAAAAAW0CAAAAAW4CAAAAAQIAAAAJACAUAAC_AQAgAwAAAAkAIBQAAL8BACAVAAC-AQAgAQ0AAN0BADAJBAAAkQEAIAYAAJIBACANAQCDAQAhXAAAkAEAMF0AAAcAEF4AAJABADBtAgAAAAFuAgCOAQAhbwIAjgEAIQIAAAAJACANAAC-AQAgAgAAALwBACANAAC9AQAgBw0BAIMBACFcAAC7AQAwXQAAvAEAEF4AALsBADBtAgCOAQAhbgIAjgEAIW8CAI4BACEHDQEAgwEAIVwAALsBADBdAAC8AQAQXgAAuwEAMG0CAI4BACFuAgCOAQAhbwIAjgEAIQMNAQCZAQAhbQIAnwEAIW4CAJ8BACEEBgAAqAEAIA0BAJkBACFtAgCfAQAhbgIAnwEAIQQGAACsAQAgDQEAAAABbQIAAAABbgIAAAABAxQAANsBACB-AAABACB_AADcAQAgBBQAALQBADB-AAC4AQAwfwAAtQEAMIEBAAC3AQAgAAAAAAALFAAAyAEAMBUAAM0BADB8AADMAQAwfQAAzAEAMH4AAMwBADB_AADJAQAwgAEAAMoBADCBAQAAywEAIIIBAADMAQAwgwEAAM4BADCEAQAAzwEAMAQFAADBAQAgXwIAAAABcAEAAAABcQEAAAABAgAAAAUAIBQAANMBACADAAAABQAgFAAA0wEAIBUAANIBACABDQAA2gEAMAkDAACUAQAgBQAAlQEAIFwAAJMBADBdAAADABBeAACTAQAwXwIAAAABcAEAgwEAIXEBAIMBACFyAgCOAQAhAgAAAAUAIA0AANIBACACAAAA0AEAIA0AANEBACAHXAAAzwEAMF0AANABABBeAADPAQAwXwIAjgEAIXABAIMBACFxAQCDAQAhcgIAjgEAIQdcAADPAQAwXQAA0AEAEF4AAM8BADBfAgCOAQAhcAEAgwEAIXEBAIMBACFyAgCOAQAhA18CAJ8BACFwAQCZAQAhcQEAmQEAIQQFAACzAQAgXwIAnwEAIXABAJkBACFxAQCZAQAhBAUAAMEBACBfAgAAAAFwAQAAAAFxAQAAAAEEFAAAyAEAMH4AAMwBADB_AADJAQAwgQEAAMsBACAAAgMAANgBACAFAADZAQAgAQUAAKEBACABBAAA1QEAIAADXwIAAAABcAEAAAABcQEAAAABBV8CAAAAAXMBAAAAAXQBAAAAAXUBAAAAAXYBAAAAAQIAAAABACAUAADbAQAgAw0BAAAAAW0CAAAAAW4CAAAAAQMAAAAQACAUAADbAQAgFQAA4AEAIAcAAAAQACANAADgAQAgXwIAnwEAIXMBAJkBACF0AQCZAQAhdQEAmQEAIXYBAJkBACEFXwIAnwEAIXMBAJkBACF0AQCZAQAhdQEAmQEAIXYBAJkBACEFAwAAwAEAIF8CAAAAAXABAAAAAXEBAAAAAXICAAAAAQIAAAAFACAUAADhAQAgAwAAAAMAIBQAAOEBACAVAADlAQAgBwAAAAMAIAMAALIBACANAADlAQAgXwIAnwEAIXABAJkBACFxAQCZAQAhcgIAnwEAIQUDAACyAQAgXwIAnwEAIXABAJkBACFxAQCZAQAhcgIAnwEAIQUEAACrAQAgDQEAAAABbQIAAAABbgIAAAABbwIAAAABAgAAAAkAIBQAAOYBACADAAAABwAgFAAA5gEAIBUAAOoBACAGAAAABwAgBAAApwEAIA0BAOsBACFtAgCfAQAhbgIAnwEAIW8CAJ8BACEFBAAApwEAIA0BAJkBACFtAgCfAQAhbgIAnwEAIW8CAJ8BACEGBAAApwEAIA0BAJkBACFtAgCfAQAhbgIAnwEAIW8CAJ8BACGCAQEAAAABAgQGAgcABgMDAAEFCgMHAAUCBAACBgwEAQUAAwEFDQABBA4AAAAABQcACxoADBsADRwADh0ADwAAAAAABQcACxoADBsADRwADh0ADwEDAAEBAwABBQcAFBoAFRsAFhwAFx0AGAAAAAAABQcAFBoAFRsAFhwAFx0AGAEEAAIBBAACBQcAHRoAHhsAHxwAIB0AIQAAAAAABQcAHRoAHhsAHxwAIB0AIQEFAAMFBwAlGgAmGwAnHAAoHQApAAAAAAAFBwAlGgAmGwAnHAAoHQApAAAAAwcALxwAMB0AMQAAAAMHAC8cADAdADEIAgEJDwEKEgELEwEMFAEOFgEPGAcQGQgRGwESHQcTHgkWHwEXIAEYIQceJAofJRAgJgIhJwIiKAIjKQIkKgIlLAImLgcnLxEoMQIpMwcqNBIrNQIsNgItNwcuOhMvOxkwPAMxPQMyPgMzPwM0QAM1QgM2RAc3RRo4RwM5SQc6Shs7SwM8TAM9TQc-UBw_USJAUwRBVARCVgRDVwREWARFWgRGXAdHXSNIXgRJXwdKYiRLYypMZStNZitOaStPaitQaytRbStSbwdTcCxUcitVdAdWdS1XditYdytZeAdaey5bfDI"
 }
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
@@ -70,8 +72,8 @@ export interface PrismaClientConstructor {
    * const prisma = new PrismaClient({
    *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
    * })
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
+   * // Fetch zero or more Repositories
+   * const repositories = await prisma.repository.findMany()
    * ```
    * 
    * Read more in our [docs](https://pris.ly/d/client).
@@ -94,8 +96,8 @@ export interface PrismaClientConstructor {
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * // Fetch zero or more Repositories
+ * const repositories = await prisma.repository.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -188,7 +190,55 @@ export interface PrismaClient<
     extArgs: ExtArgs
   }>>
 
-    
+      /**
+   * `prisma.repository`: Exposes CRUD operations for the **repository** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Repositories
+    * const repositories = await prisma.repository.findMany()
+    * ```
+    */
+  get repository(): Prisma.repositoryDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.files`: Exposes CRUD operations for the **files** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Files
+    * const files = await prisma.files.findMany()
+    * ```
+    */
+  get files(): Prisma.filesDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.chunk`: Exposes CRUD operations for the **chunk** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Chunks
+    * const chunks = await prisma.chunk.findMany()
+    * ```
+    */
+  get chunk(): Prisma.chunkDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.embedding`: Exposes CRUD operations for the **embedding** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Embeddings
+    * const embeddings = await prisma.embedding.findMany()
+    * ```
+    */
+  get embedding(): Prisma.embeddingDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.userQuery`: Exposes CRUD operations for the **UserQuery** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserQueries
+    * const userQueries = await prisma.userQuery.findMany()
+    * ```
+    */
+  get userQuery(): Prisma.UserQueryDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {

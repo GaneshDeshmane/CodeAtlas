@@ -8,4 +8,9 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/repository.ts'
+export type * from './models/files.ts'
+export type * from './models/chunk.ts'
+export type * from './models/embedding.ts'
+export type * from './models/UserQuery.ts'
 export type * from './commonInputTypes.ts'

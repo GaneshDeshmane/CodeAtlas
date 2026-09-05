@@ -51,7 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-
+  repository: 'repository',
+  files: 'files',
+  chunk: 'chunk',
+  embedding: 'embedding',
+  UserQuery: 'UserQuery'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,4 +72,67 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const RepositoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  url: 'url',
+  owner: 'owner',
+  path: 'path'
+} as const
+
+export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof typeof RepositoryScalarFieldEnum]
+
+
+export const FilesScalarFieldEnum = {
+  id: 'id',
+  fileName: 'fileName',
+  fileContent: 'fileContent',
+  repositoryId: 'repositoryId'
+} as const
+
+export type FilesScalarFieldEnum = (typeof FilesScalarFieldEnum)[keyof typeof FilesScalarFieldEnum]
+
+
+export const ChunkScalarFieldEnum = {
+  chunkId: 'chunkId',
+  data: 'data',
+  position: 'position',
+  filesId: 'filesId'
+} as const
+
+export type ChunkScalarFieldEnum = (typeof ChunkScalarFieldEnum)[keyof typeof ChunkScalarFieldEnum]
+
+
+export const EmbeddingScalarFieldEnum = {
+  embeddingId: 'embeddingId',
+  chunkId: 'chunkId'
+} as const
+
+export type EmbeddingScalarFieldEnum = (typeof EmbeddingScalarFieldEnum)[keyof typeof EmbeddingScalarFieldEnum]
+
+
+export const UserQueryScalarFieldEnum = {
+  id: 'id',
+  query: 'query'
+} as const
+
+export type UserQueryScalarFieldEnum = (typeof UserQueryScalarFieldEnum)[keyof typeof UserQueryScalarFieldEnum]
+
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+} as const
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 

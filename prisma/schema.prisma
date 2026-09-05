@@ -15,7 +15,7 @@
 //     updatedAt DateTime @updatedAt
 //   }
 model repository{
-    id Int @id @default(autoincrement()) @unique
+    id Int @id @default(autoincrement()) 
     name String
     url String
     owner String
@@ -43,7 +43,7 @@ model embedding{
   embeddingId Int @id @default(autoincrement()) 
   data Unsupported("vector(768)")
   chunk chunk @relation(fields: [chunkId],references:[chunkId])
-  chunkId Int
+  chunkId Int @unique
 
 }
 model UserQuery{
