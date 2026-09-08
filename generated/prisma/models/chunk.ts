@@ -40,23 +40,29 @@ export type ChunkSumAggregateOutputType = {
 
 export type ChunkMinAggregateOutputType = {
   chunkId: number | null
-  data: string | null
+  content: string | null
   position: number | null
   filesId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type ChunkMaxAggregateOutputType = {
   chunkId: number | null
-  data: string | null
+  content: string | null
   position: number | null
   filesId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type ChunkCountAggregateOutputType = {
   chunkId: number
-  data: number
+  content: number
   position: number
   filesId: number
+  createdAT: number
+  updated: number
   _all: number
 }
 
@@ -75,23 +81,29 @@ export type ChunkSumAggregateInputType = {
 
 export type ChunkMinAggregateInputType = {
   chunkId?: true
-  data?: true
+  content?: true
   position?: true
   filesId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type ChunkMaxAggregateInputType = {
   chunkId?: true
-  data?: true
+  content?: true
   position?: true
   filesId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type ChunkCountAggregateInputType = {
   chunkId?: true
-  data?: true
+  content?: true
   position?: true
   filesId?: true
+  createdAT?: true
+  updated?: true
   _all?: true
 }
 
@@ -183,9 +195,11 @@ export type chunkGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type ChunkGroupByOutputType = {
   chunkId: number
-  data: string
+  content: string
   position: number
   filesId: number
+  createdAT: Date
+  updated: Date
   _count: ChunkCountAggregateOutputType | null
   _avg: ChunkAvgAggregateOutputType | null
   _sum: ChunkSumAggregateOutputType | null
@@ -213,18 +227,22 @@ export type chunkWhereInput = {
   OR?: Prisma.chunkWhereInput[]
   NOT?: Prisma.chunkWhereInput | Prisma.chunkWhereInput[]
   chunkId?: Prisma.IntFilter<"chunk"> | number
-  data?: Prisma.StringFilter<"chunk"> | string
+  content?: Prisma.StringFilter<"chunk"> | string
   position?: Prisma.IntFilter<"chunk"> | number
   filesId?: Prisma.IntFilter<"chunk"> | number
+  createdAT?: Prisma.DateTimeFilter<"chunk"> | Date | string
+  updated?: Prisma.DateTimeFilter<"chunk"> | Date | string
   files?: Prisma.XOR<Prisma.FilesScalarRelationFilter, Prisma.filesWhereInput>
   embedding?: Prisma.XOR<Prisma.EmbeddingNullableScalarRelationFilter, Prisma.embeddingWhereInput> | null
 }
 
 export type chunkOrderByWithRelationInput = {
   chunkId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  content?: Prisma.SortOrder
   position?: Prisma.SortOrder
   filesId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   files?: Prisma.filesOrderByWithRelationInput
   embedding?: Prisma.embeddingOrderByWithRelationInput
 }
@@ -234,18 +252,22 @@ export type chunkWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.chunkWhereInput | Prisma.chunkWhereInput[]
   OR?: Prisma.chunkWhereInput[]
   NOT?: Prisma.chunkWhereInput | Prisma.chunkWhereInput[]
-  data?: Prisma.StringFilter<"chunk"> | string
+  content?: Prisma.StringFilter<"chunk"> | string
   position?: Prisma.IntFilter<"chunk"> | number
   filesId?: Prisma.IntFilter<"chunk"> | number
+  createdAT?: Prisma.DateTimeFilter<"chunk"> | Date | string
+  updated?: Prisma.DateTimeFilter<"chunk"> | Date | string
   files?: Prisma.XOR<Prisma.FilesScalarRelationFilter, Prisma.filesWhereInput>
   embedding?: Prisma.XOR<Prisma.EmbeddingNullableScalarRelationFilter, Prisma.embeddingWhereInput> | null
 }, "chunkId">
 
 export type chunkOrderByWithAggregationInput = {
   chunkId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  content?: Prisma.SortOrder
   position?: Prisma.SortOrder
   filesId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   _count?: Prisma.chunkCountOrderByAggregateInput
   _avg?: Prisma.chunkAvgOrderByAggregateInput
   _max?: Prisma.chunkMaxOrderByAggregateInput
@@ -258,58 +280,74 @@ export type chunkScalarWhereWithAggregatesInput = {
   OR?: Prisma.chunkScalarWhereWithAggregatesInput[]
   NOT?: Prisma.chunkScalarWhereWithAggregatesInput | Prisma.chunkScalarWhereWithAggregatesInput[]
   chunkId?: Prisma.IntWithAggregatesFilter<"chunk"> | number
-  data?: Prisma.StringWithAggregatesFilter<"chunk"> | string
+  content?: Prisma.StringWithAggregatesFilter<"chunk"> | string
   position?: Prisma.IntWithAggregatesFilter<"chunk"> | number
   filesId?: Prisma.IntWithAggregatesFilter<"chunk"> | number
+  createdAT?: Prisma.DateTimeWithAggregatesFilter<"chunk"> | Date | string
+  updated?: Prisma.DateTimeWithAggregatesFilter<"chunk"> | Date | string
 }
 
 export type chunkCreateInput = {
-  data: string
+  content: string
   position: number
+  createdAT: Date | string
+  updated: Date | string
   files: Prisma.filesCreateNestedOneWithoutChunkInput
   embedding?: Prisma.embeddingCreateNestedOneWithoutChunkInput
 }
 
 export type chunkUncheckedCreateInput = {
   chunkId?: number
-  data: string
+  content: string
   position: number
   filesId: number
+  createdAT: Date | string
+  updated: Date | string
   embedding?: Prisma.embeddingUncheckedCreateNestedOneWithoutChunkInput
 }
 
 export type chunkUpdateInput = {
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.filesUpdateOneRequiredWithoutChunkNestedInput
   embedding?: Prisma.embeddingUpdateOneWithoutChunkNestedInput
 }
 
 export type chunkUncheckedUpdateInput = {
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   filesId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.embeddingUncheckedUpdateOneWithoutChunkNestedInput
 }
 
 export type chunkCreateManyInput = {
   chunkId?: number
-  data: string
+  content: string
   position: number
   filesId: number
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type chunkUpdateManyMutationInput = {
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type chunkUncheckedUpdateManyInput = {
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   filesId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ChunkListRelationFilter = {
@@ -324,9 +362,11 @@ export type chunkOrderByRelationAggregateInput = {
 
 export type chunkCountOrderByAggregateInput = {
   chunkId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  content?: Prisma.SortOrder
   position?: Prisma.SortOrder
   filesId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type chunkAvgOrderByAggregateInput = {
@@ -337,16 +377,20 @@ export type chunkAvgOrderByAggregateInput = {
 
 export type chunkMaxOrderByAggregateInput = {
   chunkId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  content?: Prisma.SortOrder
   position?: Prisma.SortOrder
   filesId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type chunkMinOrderByAggregateInput = {
   chunkId?: Prisma.SortOrder
-  data?: Prisma.SortOrder
+  content?: Prisma.SortOrder
   position?: Prisma.SortOrder
   filesId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type chunkSumOrderByAggregateInput = {
@@ -411,15 +455,19 @@ export type chunkUpdateOneRequiredWithoutEmbeddingNestedInput = {
 }
 
 export type chunkCreateWithoutFilesInput = {
-  data: string
+  content: string
   position: number
+  createdAT: Date | string
+  updated: Date | string
   embedding?: Prisma.embeddingCreateNestedOneWithoutChunkInput
 }
 
 export type chunkUncheckedCreateWithoutFilesInput = {
   chunkId?: number
-  data: string
+  content: string
   position: number
+  createdAT: Date | string
+  updated: Date | string
   embedding?: Prisma.embeddingUncheckedCreateNestedOneWithoutChunkInput
 }
 
@@ -454,22 +502,28 @@ export type chunkScalarWhereInput = {
   OR?: Prisma.chunkScalarWhereInput[]
   NOT?: Prisma.chunkScalarWhereInput | Prisma.chunkScalarWhereInput[]
   chunkId?: Prisma.IntFilter<"chunk"> | number
-  data?: Prisma.StringFilter<"chunk"> | string
+  content?: Prisma.StringFilter<"chunk"> | string
   position?: Prisma.IntFilter<"chunk"> | number
   filesId?: Prisma.IntFilter<"chunk"> | number
+  createdAT?: Prisma.DateTimeFilter<"chunk"> | Date | string
+  updated?: Prisma.DateTimeFilter<"chunk"> | Date | string
 }
 
 export type chunkCreateWithoutEmbeddingInput = {
-  data: string
+  content: string
   position: number
+  createdAT: Date | string
+  updated: Date | string
   files: Prisma.filesCreateNestedOneWithoutChunkInput
 }
 
 export type chunkUncheckedCreateWithoutEmbeddingInput = {
   chunkId?: number
-  data: string
+  content: string
   position: number
   filesId: number
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type chunkCreateOrConnectWithoutEmbeddingInput = {
@@ -489,78 +543,98 @@ export type chunkUpdateToOneWithWhereWithoutEmbeddingInput = {
 }
 
 export type chunkUpdateWithoutEmbeddingInput = {
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.filesUpdateOneRequiredWithoutChunkNestedInput
 }
 
 export type chunkUncheckedUpdateWithoutEmbeddingInput = {
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
   filesId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type chunkCreateManyFilesInput = {
   chunkId?: number
-  data: string
+  content: string
   position: number
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type chunkUpdateWithoutFilesInput = {
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.embeddingUpdateOneWithoutChunkNestedInput
 }
 
 export type chunkUncheckedUpdateWithoutFilesInput = {
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.embeddingUncheckedUpdateOneWithoutChunkNestedInput
 }
 
 export type chunkUncheckedUpdateManyWithoutFilesInput = {
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
-  data?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type chunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   chunkId?: boolean
-  data?: boolean
+  content?: boolean
   position?: boolean
   filesId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   files?: boolean | Prisma.filesDefaultArgs<ExtArgs>
   embedding?: boolean | Prisma.chunk$embeddingArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type chunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   chunkId?: boolean
-  data?: boolean
+  content?: boolean
   position?: boolean
   filesId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   files?: boolean | Prisma.filesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type chunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   chunkId?: boolean
-  data?: boolean
+  content?: boolean
   position?: boolean
   filesId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   files?: boolean | Prisma.filesDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chunk"]>
 
 export type chunkSelectScalar = {
   chunkId?: boolean
-  data?: boolean
+  content?: boolean
   position?: boolean
   filesId?: boolean
+  createdAT?: boolean
+  updated?: boolean
 }
 
-export type chunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"chunkId" | "data" | "position" | "filesId", ExtArgs["result"]["chunk"]>
+export type chunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"chunkId" | "content" | "position" | "filesId" | "createdAT" | "updated", ExtArgs["result"]["chunk"]>
 export type chunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | Prisma.filesDefaultArgs<ExtArgs>
   embedding?: boolean | Prisma.chunk$embeddingArgs<ExtArgs>
@@ -580,9 +654,11 @@ export type $chunkPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     chunkId: number
-    data: string
+    content: string
     position: number
     filesId: number
+    createdAT: Date
+    updated: Date
   }, ExtArgs["result"]["chunk"]>
   composites: {}
 }
@@ -1009,9 +1085,11 @@ export interface Prisma__chunkClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface chunkFieldRefs {
   readonly chunkId: Prisma.FieldRef<"chunk", 'Int'>
-  readonly data: Prisma.FieldRef<"chunk", 'String'>
+  readonly content: Prisma.FieldRef<"chunk", 'String'>
   readonly position: Prisma.FieldRef<"chunk", 'Int'>
   readonly filesId: Prisma.FieldRef<"chunk", 'Int'>
+  readonly createdAT: Prisma.FieldRef<"chunk", 'DateTime'>
+  readonly updated: Prisma.FieldRef<"chunk", 'DateTime'>
 }
     
 

@@ -819,7 +819,9 @@ export const RepositoryScalarFieldEnum = {
   name: 'name',
   url: 'url',
   owner: 'owner',
-  path: 'path'
+  path: 'path',
+  createdAT: 'createdAT',
+  updated: 'updated'
 } as const
 
 export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof typeof RepositoryScalarFieldEnum]
@@ -827,9 +829,11 @@ export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof
 
 export const FilesScalarFieldEnum = {
   id: 'id',
-  fileName: 'fileName',
+  path: 'path',
   fileContent: 'fileContent',
-  repositoryId: 'repositoryId'
+  repositoryId: 'repositoryId',
+  createdAT: 'createdAT',
+  updated: 'updated'
 } as const
 
 export type FilesScalarFieldEnum = (typeof FilesScalarFieldEnum)[keyof typeof FilesScalarFieldEnum]
@@ -837,9 +841,11 @@ export type FilesScalarFieldEnum = (typeof FilesScalarFieldEnum)[keyof typeof Fi
 
 export const ChunkScalarFieldEnum = {
   chunkId: 'chunkId',
-  data: 'data',
+  content: 'content',
   position: 'position',
-  filesId: 'filesId'
+  filesId: 'filesId',
+  createdAT: 'createdAT',
+  updated: 'updated'
 } as const
 
 export type ChunkScalarFieldEnum = (typeof ChunkScalarFieldEnum)[keyof typeof ChunkScalarFieldEnum]
@@ -847,7 +853,9 @@ export type ChunkScalarFieldEnum = (typeof ChunkScalarFieldEnum)[keyof typeof Ch
 
 export const EmbeddingScalarFieldEnum = {
   embeddingId: 'embeddingId',
-  chunkId: 'chunkId'
+  chunkId: 'chunkId',
+  createdAT: 'createdAT',
+  updated: 'updated'
 } as const
 
 export type EmbeddingScalarFieldEnum = (typeof EmbeddingScalarFieldEnum)[keyof typeof EmbeddingScalarFieldEnum]
@@ -855,7 +863,9 @@ export type EmbeddingScalarFieldEnum = (typeof EmbeddingScalarFieldEnum)[keyof t
 
 export const UserQueryScalarFieldEnum = {
   id: 'id',
-  query: 'query'
+  query: 'query',
+  createdAT: 'createdAT',
+  updated: 'updated'
 } as const
 
 export type UserQueryScalarFieldEnum = (typeof UserQueryScalarFieldEnum)[keyof typeof UserQueryScalarFieldEnum]
@@ -908,6 +918,20 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
  * Reference to a field of type 'String[]'
  */
 export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
 
 

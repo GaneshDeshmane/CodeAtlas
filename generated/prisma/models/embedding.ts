@@ -39,16 +39,22 @@ export type EmbeddingSumAggregateOutputType = {
 export type EmbeddingMinAggregateOutputType = {
   embeddingId: number | null
   chunkId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type EmbeddingMaxAggregateOutputType = {
   embeddingId: number | null
   chunkId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type EmbeddingCountAggregateOutputType = {
   embeddingId: number
   chunkId: number
+  createdAT: number
+  updated: number
   _all: number
 }
 
@@ -66,16 +72,22 @@ export type EmbeddingSumAggregateInputType = {
 export type EmbeddingMinAggregateInputType = {
   embeddingId?: true
   chunkId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type EmbeddingMaxAggregateInputType = {
   embeddingId?: true
   chunkId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type EmbeddingCountAggregateInputType = {
   embeddingId?: true
   chunkId?: true
+  createdAT?: true
+  updated?: true
   _all?: true
 }
 
@@ -168,6 +180,8 @@ export type embeddingGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type EmbeddingGroupByOutputType = {
   embeddingId: number
   chunkId: number
+  createdAT: Date
+  updated: Date
   _count: EmbeddingCountAggregateOutputType | null
   _avg: EmbeddingAvgAggregateOutputType | null
   _sum: EmbeddingSumAggregateOutputType | null
@@ -196,12 +210,16 @@ export type embeddingWhereInput = {
   NOT?: Prisma.embeddingWhereInput | Prisma.embeddingWhereInput[]
   embeddingId?: Prisma.IntFilter<"embedding"> | number
   chunkId?: Prisma.IntFilter<"embedding"> | number
+  createdAT?: Prisma.DateTimeFilter<"embedding"> | Date | string
+  updated?: Prisma.DateTimeFilter<"embedding"> | Date | string
   chunk?: Prisma.XOR<Prisma.ChunkScalarRelationFilter, Prisma.chunkWhereInput>
 }
 
 export type embeddingOrderByWithRelationInput = {
   embeddingId?: Prisma.SortOrder
   chunkId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   chunk?: Prisma.chunkOrderByWithRelationInput
 }
 
@@ -211,12 +229,16 @@ export type embeddingWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.embeddingWhereInput | Prisma.embeddingWhereInput[]
   OR?: Prisma.embeddingWhereInput[]
   NOT?: Prisma.embeddingWhereInput | Prisma.embeddingWhereInput[]
+  createdAT?: Prisma.DateTimeFilter<"embedding"> | Date | string
+  updated?: Prisma.DateTimeFilter<"embedding"> | Date | string
   chunk?: Prisma.XOR<Prisma.ChunkScalarRelationFilter, Prisma.chunkWhereInput>
 }, "embeddingId" | "chunkId">
 
 export type embeddingOrderByWithAggregationInput = {
   embeddingId?: Prisma.SortOrder
   chunkId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   _count?: Prisma.embeddingCountOrderByAggregateInput
   _avg?: Prisma.embeddingAvgOrderByAggregateInput
   _max?: Prisma.embeddingMaxOrderByAggregateInput
@@ -230,24 +252,33 @@ export type embeddingScalarWhereWithAggregatesInput = {
   NOT?: Prisma.embeddingScalarWhereWithAggregatesInput | Prisma.embeddingScalarWhereWithAggregatesInput[]
   embeddingId?: Prisma.IntWithAggregatesFilter<"embedding"> | number
   chunkId?: Prisma.IntWithAggregatesFilter<"embedding"> | number
+  createdAT?: Prisma.DateTimeWithAggregatesFilter<"embedding"> | Date | string
+  updated?: Prisma.DateTimeWithAggregatesFilter<"embedding"> | Date | string
 }
 
 export type embeddingUpdateInput = {
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chunk?: Prisma.chunkUpdateOneRequiredWithoutEmbeddingNestedInput
 }
 
 export type embeddingUncheckedUpdateInput = {
   embeddingId?: Prisma.IntFieldUpdateOperationsInput | number
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type embeddingUpdateManyMutationInput = {
-
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type embeddingUncheckedUpdateManyInput = {
   embeddingId?: Prisma.IntFieldUpdateOperationsInput | number
   chunkId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type EmbeddingNullableScalarRelationFilter = {
@@ -258,6 +289,8 @@ export type EmbeddingNullableScalarRelationFilter = {
 export type embeddingCountOrderByAggregateInput = {
   embeddingId?: Prisma.SortOrder
   chunkId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type embeddingAvgOrderByAggregateInput = {
@@ -268,11 +301,15 @@ export type embeddingAvgOrderByAggregateInput = {
 export type embeddingMaxOrderByAggregateInput = {
   embeddingId?: Prisma.SortOrder
   chunkId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type embeddingMinOrderByAggregateInput = {
   embeddingId?: Prisma.SortOrder
   chunkId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type embeddingSumOrderByAggregateInput = {
@@ -308,11 +345,14 @@ export type embeddingUpdateToOneWithWhereWithoutChunkInput = {
 }
 
 export type embeddingUpdateWithoutChunkInput = {
-
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type embeddingUncheckedUpdateWithoutChunkInput = {
   embeddingId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -320,6 +360,8 @@ export type embeddingUncheckedUpdateWithoutChunkInput = {
 export type embeddingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   embeddingId?: boolean
   chunkId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   chunk?: boolean | Prisma.chunkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["embedding"]>
 
@@ -327,15 +369,19 @@ export type embeddingSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type embeddingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   embeddingId?: boolean
   chunkId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   chunk?: boolean | Prisma.chunkDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["embedding"]>
 
 export type embeddingSelectScalar = {
   embeddingId?: boolean
   chunkId?: boolean
+  createdAT?: boolean
+  updated?: boolean
 }
 
-export type embeddingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"embeddingId" | "chunkId", ExtArgs["result"]["embedding"]>
+export type embeddingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"embeddingId" | "chunkId" | "createdAT" | "updated", ExtArgs["result"]["embedding"]>
 export type embeddingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chunk?: boolean | Prisma.chunkDefaultArgs<ExtArgs>
 }
@@ -351,6 +397,8 @@ export type $embeddingPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     embeddingId: number
     chunkId: number
+    createdAT: Date
+    updated: Date
   }, ExtArgs["result"]["embedding"]>
   composites: {}
 }
@@ -706,6 +754,8 @@ export interface Prisma__embeddingClient<T, Null = never, ExtArgs extends runtim
 export interface embeddingFieldRefs {
   readonly embeddingId: Prisma.FieldRef<"embedding", 'Int'>
   readonly chunkId: Prisma.FieldRef<"embedding", 'Int'>
+  readonly createdAT: Prisma.FieldRef<"embedding", 'DateTime'>
+  readonly updated: Prisma.FieldRef<"embedding", 'DateTime'>
 }
     
 

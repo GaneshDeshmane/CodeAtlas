@@ -38,23 +38,29 @@ export type FilesSumAggregateOutputType = {
 
 export type FilesMinAggregateOutputType = {
   id: number | null
-  fileName: string | null
+  path: string | null
   fileContent: string | null
   repositoryId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type FilesMaxAggregateOutputType = {
   id: number | null
-  fileName: string | null
+  path: string | null
   fileContent: string | null
   repositoryId: number | null
+  createdAT: Date | null
+  updated: Date | null
 }
 
 export type FilesCountAggregateOutputType = {
   id: number
-  fileName: number
+  path: number
   fileContent: number
   repositoryId: number
+  createdAT: number
+  updated: number
   _all: number
 }
 
@@ -71,23 +77,29 @@ export type FilesSumAggregateInputType = {
 
 export type FilesMinAggregateInputType = {
   id?: true
-  fileName?: true
+  path?: true
   fileContent?: true
   repositoryId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type FilesMaxAggregateInputType = {
   id?: true
-  fileName?: true
+  path?: true
   fileContent?: true
   repositoryId?: true
+  createdAT?: true
+  updated?: true
 }
 
 export type FilesCountAggregateInputType = {
   id?: true
-  fileName?: true
+  path?: true
   fileContent?: true
   repositoryId?: true
+  createdAT?: true
+  updated?: true
   _all?: true
 }
 
@@ -179,9 +191,11 @@ export type filesGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type FilesGroupByOutputType = {
   id: number
-  fileName: string
+  path: string
   fileContent: string
   repositoryId: number
+  createdAT: Date
+  updated: Date
   _count: FilesCountAggregateOutputType | null
   _avg: FilesAvgAggregateOutputType | null
   _sum: FilesSumAggregateOutputType | null
@@ -209,18 +223,22 @@ export type filesWhereInput = {
   OR?: Prisma.filesWhereInput[]
   NOT?: Prisma.filesWhereInput | Prisma.filesWhereInput[]
   id?: Prisma.IntFilter<"files"> | number
-  fileName?: Prisma.StringFilter<"files"> | string
+  path?: Prisma.StringFilter<"files"> | string
   fileContent?: Prisma.StringFilter<"files"> | string
   repositoryId?: Prisma.IntFilter<"files"> | number
+  createdAT?: Prisma.DateTimeFilter<"files"> | Date | string
+  updated?: Prisma.DateTimeFilter<"files"> | Date | string
   repository?: Prisma.XOR<Prisma.RepositoryScalarRelationFilter, Prisma.repositoryWhereInput>
   chunk?: Prisma.ChunkListRelationFilter
 }
 
 export type filesOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  fileName?: Prisma.SortOrder
+  path?: Prisma.SortOrder
   fileContent?: Prisma.SortOrder
   repositoryId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   repository?: Prisma.repositoryOrderByWithRelationInput
   chunk?: Prisma.chunkOrderByRelationAggregateInput
 }
@@ -230,18 +248,22 @@ export type filesWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.filesWhereInput | Prisma.filesWhereInput[]
   OR?: Prisma.filesWhereInput[]
   NOT?: Prisma.filesWhereInput | Prisma.filesWhereInput[]
-  fileName?: Prisma.StringFilter<"files"> | string
+  path?: Prisma.StringFilter<"files"> | string
   fileContent?: Prisma.StringFilter<"files"> | string
   repositoryId?: Prisma.IntFilter<"files"> | number
+  createdAT?: Prisma.DateTimeFilter<"files"> | Date | string
+  updated?: Prisma.DateTimeFilter<"files"> | Date | string
   repository?: Prisma.XOR<Prisma.RepositoryScalarRelationFilter, Prisma.repositoryWhereInput>
   chunk?: Prisma.ChunkListRelationFilter
 }, "id">
 
 export type filesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  fileName?: Prisma.SortOrder
+  path?: Prisma.SortOrder
   fileContent?: Prisma.SortOrder
   repositoryId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
   _count?: Prisma.filesCountOrderByAggregateInput
   _avg?: Prisma.filesAvgOrderByAggregateInput
   _max?: Prisma.filesMaxOrderByAggregateInput
@@ -254,58 +276,74 @@ export type filesScalarWhereWithAggregatesInput = {
   OR?: Prisma.filesScalarWhereWithAggregatesInput[]
   NOT?: Prisma.filesScalarWhereWithAggregatesInput | Prisma.filesScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"files"> | number
-  fileName?: Prisma.StringWithAggregatesFilter<"files"> | string
+  path?: Prisma.StringWithAggregatesFilter<"files"> | string
   fileContent?: Prisma.StringWithAggregatesFilter<"files"> | string
   repositoryId?: Prisma.IntWithAggregatesFilter<"files"> | number
+  createdAT?: Prisma.DateTimeWithAggregatesFilter<"files"> | Date | string
+  updated?: Prisma.DateTimeWithAggregatesFilter<"files"> | Date | string
 }
 
 export type filesCreateInput = {
-  fileName: string
+  path: string
   fileContent: string
+  createdAT: Date | string
+  updated: Date | string
   repository: Prisma.repositoryCreateNestedOneWithoutFilesInput
   chunk?: Prisma.chunkCreateNestedManyWithoutFilesInput
 }
 
 export type filesUncheckedCreateInput = {
   id?: number
-  fileName: string
+  path: string
   fileContent: string
   repositoryId: number
+  createdAT: Date | string
+  updated: Date | string
   chunk?: Prisma.chunkUncheckedCreateNestedManyWithoutFilesInput
 }
 
 export type filesUpdateInput = {
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   repository?: Prisma.repositoryUpdateOneRequiredWithoutFilesNestedInput
   chunk?: Prisma.chunkUpdateManyWithoutFilesNestedInput
 }
 
 export type filesUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
   repositoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chunk?: Prisma.chunkUncheckedUpdateManyWithoutFilesNestedInput
 }
 
 export type filesCreateManyInput = {
   id?: number
-  fileName: string
+  path: string
   fileContent: string
   repositoryId: number
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type filesUpdateManyMutationInput = {
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type filesUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
   repositoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FilesListRelationFilter = {
@@ -320,9 +358,11 @@ export type filesOrderByRelationAggregateInput = {
 
 export type filesCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  fileName?: Prisma.SortOrder
+  path?: Prisma.SortOrder
   fileContent?: Prisma.SortOrder
   repositoryId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type filesAvgOrderByAggregateInput = {
@@ -332,16 +372,20 @@ export type filesAvgOrderByAggregateInput = {
 
 export type filesMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  fileName?: Prisma.SortOrder
+  path?: Prisma.SortOrder
   fileContent?: Prisma.SortOrder
   repositoryId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type filesMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  fileName?: Prisma.SortOrder
+  path?: Prisma.SortOrder
   fileContent?: Prisma.SortOrder
   repositoryId?: Prisma.SortOrder
+  createdAT?: Prisma.SortOrder
+  updated?: Prisma.SortOrder
 }
 
 export type filesSumOrderByAggregateInput = {
@@ -411,15 +455,19 @@ export type filesUpdateOneRequiredWithoutChunkNestedInput = {
 }
 
 export type filesCreateWithoutRepositoryInput = {
-  fileName: string
+  path: string
   fileContent: string
+  createdAT: Date | string
+  updated: Date | string
   chunk?: Prisma.chunkCreateNestedManyWithoutFilesInput
 }
 
 export type filesUncheckedCreateWithoutRepositoryInput = {
   id?: number
-  fileName: string
+  path: string
   fileContent: string
+  createdAT: Date | string
+  updated: Date | string
   chunk?: Prisma.chunkUncheckedCreateNestedManyWithoutFilesInput
 }
 
@@ -454,22 +502,28 @@ export type filesScalarWhereInput = {
   OR?: Prisma.filesScalarWhereInput[]
   NOT?: Prisma.filesScalarWhereInput | Prisma.filesScalarWhereInput[]
   id?: Prisma.IntFilter<"files"> | number
-  fileName?: Prisma.StringFilter<"files"> | string
+  path?: Prisma.StringFilter<"files"> | string
   fileContent?: Prisma.StringFilter<"files"> | string
   repositoryId?: Prisma.IntFilter<"files"> | number
+  createdAT?: Prisma.DateTimeFilter<"files"> | Date | string
+  updated?: Prisma.DateTimeFilter<"files"> | Date | string
 }
 
 export type filesCreateWithoutChunkInput = {
-  fileName: string
+  path: string
   fileContent: string
+  createdAT: Date | string
+  updated: Date | string
   repository: Prisma.repositoryCreateNestedOneWithoutFilesInput
 }
 
 export type filesUncheckedCreateWithoutChunkInput = {
   id?: number
-  fileName: string
+  path: string
   fileContent: string
   repositoryId: number
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type filesCreateOrConnectWithoutChunkInput = {
@@ -489,41 +543,53 @@ export type filesUpdateToOneWithWhereWithoutChunkInput = {
 }
 
 export type filesUpdateWithoutChunkInput = {
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   repository?: Prisma.repositoryUpdateOneRequiredWithoutFilesNestedInput
 }
 
 export type filesUncheckedUpdateWithoutChunkInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
   repositoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type filesCreateManyRepositoryInput = {
   id?: number
-  fileName: string
+  path: string
   fileContent: string
+  createdAT: Date | string
+  updated: Date | string
 }
 
 export type filesUpdateWithoutRepositoryInput = {
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chunk?: Prisma.chunkUpdateManyWithoutFilesNestedInput
 }
 
 export type filesUncheckedUpdateWithoutRepositoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   chunk?: Prisma.chunkUncheckedUpdateManyWithoutFilesNestedInput
 }
 
 export type filesUncheckedUpdateManyWithoutRepositoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
   fileContent?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -559,9 +625,11 @@ export type FilesCountOutputTypeCountChunkArgs<ExtArgs extends runtime.Types.Ext
 
 export type filesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  fileName?: boolean
+  path?: boolean
   fileContent?: boolean
   repositoryId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   repository?: boolean | Prisma.repositoryDefaultArgs<ExtArgs>
   chunk?: boolean | Prisma.files$chunkArgs<ExtArgs>
   _count?: boolean | Prisma.FilesCountOutputTypeDefaultArgs<ExtArgs>
@@ -569,28 +637,34 @@ export type filesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type filesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  fileName?: boolean
+  path?: boolean
   fileContent?: boolean
   repositoryId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   repository?: boolean | Prisma.repositoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["files"]>
 
 export type filesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  fileName?: boolean
+  path?: boolean
   fileContent?: boolean
   repositoryId?: boolean
+  createdAT?: boolean
+  updated?: boolean
   repository?: boolean | Prisma.repositoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["files"]>
 
 export type filesSelectScalar = {
   id?: boolean
-  fileName?: boolean
+  path?: boolean
   fileContent?: boolean
   repositoryId?: boolean
+  createdAT?: boolean
+  updated?: boolean
 }
 
-export type filesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fileName" | "fileContent" | "repositoryId", ExtArgs["result"]["files"]>
+export type filesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "path" | "fileContent" | "repositoryId" | "createdAT" | "updated", ExtArgs["result"]["files"]>
 export type filesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   repository?: boolean | Prisma.repositoryDefaultArgs<ExtArgs>
   chunk?: boolean | Prisma.files$chunkArgs<ExtArgs>
@@ -611,9 +685,11 @@ export type $filesPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    fileName: string
+    path: string
     fileContent: string
     repositoryId: number
+    createdAT: Date
+    updated: Date
   }, ExtArgs["result"]["files"]>
   composites: {}
 }
@@ -1040,9 +1116,11 @@ export interface Prisma__filesClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface filesFieldRefs {
   readonly id: Prisma.FieldRef<"files", 'Int'>
-  readonly fileName: Prisma.FieldRef<"files", 'String'>
+  readonly path: Prisma.FieldRef<"files", 'String'>
   readonly fileContent: Prisma.FieldRef<"files", 'String'>
   readonly repositoryId: Prisma.FieldRef<"files", 'Int'>
+  readonly createdAT: Prisma.FieldRef<"files", 'DateTime'>
+  readonly updated: Prisma.FieldRef<"files", 'DateTime'>
 }
     
 
