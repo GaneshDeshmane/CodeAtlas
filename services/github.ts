@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-
+import{z} from "zod"
 export function githubParser(repository:string) {
     const link = new URL(repository)
     if(link.host!=="github.com"){
@@ -24,9 +24,12 @@ export  async function githubMetadata(owner:string,repo:string) {
     }
     const respo = await fetch(`https://api.github.com/repos/${owner}/${repo}`,{
         headers: new Headers({
-            'Authorization': GITHUB_TOKEN,
+            'Authorization':`Bearer ${GITHUB_TOKEN!}`
         })
     })
+    if (!respo.ok) {
+        throw new Error('error respo')
+    }
     type data={
         name : string,
         full_name : string,
@@ -59,9 +62,12 @@ type githubTreestrre={
 export async function githubTree(owner:string , repo : string , branch : string) {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,{
         headers:new Headers({
-            'Authorization':GITHUB_TOKEN!
+            'Authorization':`Bearer ${GITHUB_TOKEN!}`
         })
     })
+    if (!response.ok) {
+        throw new Error('error respo')
+    }
     const data = await response.json() as githubTreestrre
     //const files =data.tree.filter(
       //  (item)=>item.type==="blob"
@@ -85,20 +91,38 @@ export type GitHubFileResponse = {
     content: string;
     encoding: string;
   };
+  
 export async function fileContent(owner :string,repo:string,branch:string,path:string){
     const respo = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,{
         headers:new Headers({
-            'Authorization':GITHUB_TOKEN!
+            'Authorization':`Bearer ${GITHUB_TOKEN!}`
         })
     })
+    if (!respo.ok) {
+        throw new Error('error respo')
+    }
     const data = await respo.json() as GitHubFileResponse
-    const htmldata = data.content
+    const respoType=z.object({
+        name: z.string(),
+        path: z.string(),
+        sha: z.string(),
+        size: z.number(),
+        content: z.string(),
+        encoding: z.string(),
+    })
+    const respoP=respoType.safeParse(data)
+    if (!respoP.success) {
+        throw new Error('parsing errorgggggggggggggggggg')
+    }
+   
+    const htmldata = respoP.data.content
+    
     const decoded=Uint8Array.fromBase64(htmldata)
     const html=new TextDecoder().decode(decoded)
     return{
-        path: data.path,
+        path:  respoP.data.path,
         content: html,
-        size: data.size
+        size: respoP.data.size
     }
-    console.log(respo)
+   
 }

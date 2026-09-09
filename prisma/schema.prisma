@@ -17,11 +17,12 @@
 model repository{
     id Int @id @default(autoincrement()) 
     name String
-    url String
+    url String @unique
     owner String
     path String
     files files[]
-   
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
 }
 model files{
   id Int @id @default(autoincrement()) 
@@ -31,7 +32,7 @@ model files{
   repositoryId Int
   chunk chunk[]
   createdAt DateTime @default(now())
-  UPDATED DateTime
+  updatedAt DateTime @updatedAt
 }
 model chunk{
   chunkId Int @id @default(autoincrement()) 
@@ -41,7 +42,7 @@ model chunk{
   filesId Int
   embedding embedding?
   createdAt DateTime @default(now())
-  UPDATED DateTime
+  updatedAt DateTime @updatedAt
 }
 model embedding{
   embeddingId Int @id @default(autoincrement()) 
@@ -49,11 +50,11 @@ model embedding{
   chunk chunk @relation(fields: [chunkId],references:[chunkId])
   chunkId Int @unique
   createdAt DateTime @default(now())
-  UPDATED DateTime
+  updatedAt DateTime @updatedAt
 }
 model UserQuery{
   id String @id @default(uuid())
   query String
   createdAt DateTime @default(now())
-  UPDATED DateTime
+  updatedAt DateTime @updatedAt
 }

@@ -19,7 +19,8 @@
     "ai": "^7.0.79",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "pgvector": "^0.3.0"
+    "pgvector": "^0.3.0",
+    "zod": "^4.5.4"
   },
   "scripts": {
     "postinstall": "prisma skills sync || exit 0"

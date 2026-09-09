@@ -80,8 +80,8 @@ export const RepositoryScalarFieldEnum = {
   url: 'url',
   owner: 'owner',
   path: 'path',
-  createdAT: 'createdAT',
-  updated: 'updated'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof typeof RepositoryScalarFieldEnum]
@@ -92,8 +92,8 @@ export const FilesScalarFieldEnum = {
   path: 'path',
   fileContent: 'fileContent',
   repositoryId: 'repositoryId',
-  createdAT: 'createdAT',
-  updated: 'updated'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type FilesScalarFieldEnum = (typeof FilesScalarFieldEnum)[keyof typeof FilesScalarFieldEnum]
@@ -104,8 +104,8 @@ export const ChunkScalarFieldEnum = {
   content: 'content',
   position: 'position',
   filesId: 'filesId',
-  createdAT: 'createdAT',
-  updated: 'updated'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ChunkScalarFieldEnum = (typeof ChunkScalarFieldEnum)[keyof typeof ChunkScalarFieldEnum]
@@ -114,8 +114,8 @@ export type ChunkScalarFieldEnum = (typeof ChunkScalarFieldEnum)[keyof typeof Ch
 export const EmbeddingScalarFieldEnum = {
   embeddingId: 'embeddingId',
   chunkId: 'chunkId',
-  createdAT: 'createdAT',
-  updated: 'updated'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type EmbeddingScalarFieldEnum = (typeof EmbeddingScalarFieldEnum)[keyof typeof EmbeddingScalarFieldEnum]
@@ -124,8 +124,8 @@ export type EmbeddingScalarFieldEnum = (typeof EmbeddingScalarFieldEnum)[keyof t
 export const UserQueryScalarFieldEnum = {
   id: 'id',
   query: 'query',
-  createdAT: 'createdAT',
-  updated: 'updated'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type UserQueryScalarFieldEnum = (typeof UserQueryScalarFieldEnum)[keyof typeof UserQueryScalarFieldEnum]

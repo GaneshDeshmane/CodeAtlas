@@ -40,8 +40,8 @@ export type RepositoryMinAggregateOutputType = {
   url: string | null
   owner: string | null
   path: string | null
-  createdAT: Date | null
-  updated: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type RepositoryMaxAggregateOutputType = {
@@ -50,8 +50,8 @@ export type RepositoryMaxAggregateOutputType = {
   url: string | null
   owner: string | null
   path: string | null
-  createdAT: Date | null
-  updated: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type RepositoryCountAggregateOutputType = {
@@ -60,8 +60,8 @@ export type RepositoryCountAggregateOutputType = {
   url: number
   owner: number
   path: number
-  createdAT: number
-  updated: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -80,8 +80,8 @@ export type RepositoryMinAggregateInputType = {
   url?: true
   owner?: true
   path?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type RepositoryMaxAggregateInputType = {
@@ -90,8 +90,8 @@ export type RepositoryMaxAggregateInputType = {
   url?: true
   owner?: true
   path?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type RepositoryCountAggregateInputType = {
@@ -100,8 +100,8 @@ export type RepositoryCountAggregateInputType = {
   url?: true
   owner?: true
   path?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -197,8 +197,8 @@ export type RepositoryGroupByOutputType = {
   url: string
   owner: string
   path: string
-  createdAT: Date
-  updated: Date
+  createdAt: Date
+  updatedAt: Date
   _count: RepositoryCountAggregateOutputType | null
   _avg: RepositoryAvgAggregateOutputType | null
   _sum: RepositorySumAggregateOutputType | null
@@ -230,8 +230,8 @@ export type repositoryWhereInput = {
   url?: Prisma.StringFilter<"repository"> | string
   owner?: Prisma.StringFilter<"repository"> | string
   path?: Prisma.StringFilter<"repository"> | string
-  createdAT?: Prisma.DateTimeFilter<"repository"> | Date | string
-  updated?: Prisma.DateTimeFilter<"repository"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"repository"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"repository"> | Date | string
   files?: Prisma.FilesListRelationFilter
 }
 
@@ -241,8 +241,8 @@ export type repositoryOrderByWithRelationInput = {
   url?: Prisma.SortOrder
   owner?: Prisma.SortOrder
   path?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   files?: Prisma.filesOrderByRelationAggregateInput
 }
 
@@ -255,8 +255,8 @@ export type repositoryWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"repository"> | string
   owner?: Prisma.StringFilter<"repository"> | string
   path?: Prisma.StringFilter<"repository"> | string
-  createdAT?: Prisma.DateTimeFilter<"repository"> | Date | string
-  updated?: Prisma.DateTimeFilter<"repository"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"repository"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"repository"> | Date | string
   files?: Prisma.FilesListRelationFilter
 }, "id" | "url">
 
@@ -266,8 +266,8 @@ export type repositoryOrderByWithAggregationInput = {
   url?: Prisma.SortOrder
   owner?: Prisma.SortOrder
   path?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.repositoryCountOrderByAggregateInput
   _avg?: Prisma.repositoryAvgOrderByAggregateInput
   _max?: Prisma.repositoryMaxOrderByAggregateInput
@@ -284,8 +284,8 @@ export type repositoryScalarWhereWithAggregatesInput = {
   url?: Prisma.StringWithAggregatesFilter<"repository"> | string
   owner?: Prisma.StringWithAggregatesFilter<"repository"> | string
   path?: Prisma.StringWithAggregatesFilter<"repository"> | string
-  createdAT?: Prisma.DateTimeWithAggregatesFilter<"repository"> | Date | string
-  updated?: Prisma.DateTimeWithAggregatesFilter<"repository"> | Date | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"repository"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"repository"> | Date | string
 }
 
 export type repositoryCreateInput = {
@@ -293,8 +293,8 @@ export type repositoryCreateInput = {
   url: string
   owner: string
   path: string
-  createdAT?: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   files?: Prisma.filesCreateNestedManyWithoutRepositoryInput
 }
 
@@ -304,8 +304,8 @@ export type repositoryUncheckedCreateInput = {
   url: string
   owner: string
   path: string
-  createdAT?: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   files?: Prisma.filesUncheckedCreateNestedManyWithoutRepositoryInput
 }
 
@@ -314,8 +314,8 @@ export type repositoryUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.filesUpdateManyWithoutRepositoryNestedInput
 }
 
@@ -325,8 +325,8 @@ export type repositoryUncheckedUpdateInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.filesUncheckedUpdateManyWithoutRepositoryNestedInput
 }
 
@@ -336,8 +336,8 @@ export type repositoryCreateManyInput = {
   url: string
   owner: string
   path: string
-  createdAT?: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type repositoryUpdateManyMutationInput = {
@@ -345,8 +345,8 @@ export type repositoryUpdateManyMutationInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type repositoryUncheckedUpdateManyInput = {
@@ -355,8 +355,8 @@ export type repositoryUncheckedUpdateManyInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type repositoryCountOrderByAggregateInput = {
@@ -365,8 +365,8 @@ export type repositoryCountOrderByAggregateInput = {
   url?: Prisma.SortOrder
   owner?: Prisma.SortOrder
   path?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type repositoryAvgOrderByAggregateInput = {
@@ -379,8 +379,8 @@ export type repositoryMaxOrderByAggregateInput = {
   url?: Prisma.SortOrder
   owner?: Prisma.SortOrder
   path?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type repositoryMinOrderByAggregateInput = {
@@ -389,8 +389,8 @@ export type repositoryMinOrderByAggregateInput = {
   url?: Prisma.SortOrder
   owner?: Prisma.SortOrder
   path?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type repositorySumOrderByAggregateInput = {
@@ -437,8 +437,8 @@ export type repositoryCreateWithoutFilesInput = {
   url: string
   owner: string
   path: string
-  createdAT?: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type repositoryUncheckedCreateWithoutFilesInput = {
@@ -447,8 +447,8 @@ export type repositoryUncheckedCreateWithoutFilesInput = {
   url: string
   owner: string
   path: string
-  createdAT?: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type repositoryCreateOrConnectWithoutFilesInput = {
@@ -472,8 +472,8 @@ export type repositoryUpdateWithoutFilesInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type repositoryUncheckedUpdateWithoutFilesInput = {
@@ -482,8 +482,8 @@ export type repositoryUncheckedUpdateWithoutFilesInput = {
   url?: Prisma.StringFieldUpdateOperationsInput | string
   owner?: Prisma.StringFieldUpdateOperationsInput | string
   path?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -523,8 +523,8 @@ export type repositorySelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   url?: boolean
   owner?: boolean
   path?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   files?: boolean | Prisma.repository$filesArgs<ExtArgs>
   _count?: boolean | Prisma.RepositoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repository"]>
@@ -535,8 +535,8 @@ export type repositorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   url?: boolean
   owner?: boolean
   path?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["repository"]>
 
 export type repositorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -545,8 +545,8 @@ export type repositorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   url?: boolean
   owner?: boolean
   path?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["repository"]>
 
 export type repositorySelectScalar = {
@@ -555,11 +555,11 @@ export type repositorySelectScalar = {
   url?: boolean
   owner?: boolean
   path?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type repositoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url" | "owner" | "path" | "createdAT" | "updated", ExtArgs["result"]["repository"]>
+export type repositoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url" | "owner" | "path" | "createdAt" | "updatedAt", ExtArgs["result"]["repository"]>
 export type repositoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | Prisma.repository$filesArgs<ExtArgs>
   _count?: boolean | Prisma.RepositoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -578,8 +578,8 @@ export type $repositoryPayload<ExtArgs extends runtime.Types.Extensions.Internal
     url: string
     owner: string
     path: string
-    createdAT: Date
-    updated: Date
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["repository"]>
   composites: {}
 }
@@ -1009,8 +1009,8 @@ export interface repositoryFieldRefs {
   readonly url: Prisma.FieldRef<"repository", 'String'>
   readonly owner: Prisma.FieldRef<"repository", 'String'>
   readonly path: Prisma.FieldRef<"repository", 'String'>
-  readonly createdAT: Prisma.FieldRef<"repository", 'DateTime'>
-  readonly updated: Prisma.FieldRef<"repository", 'DateTime'>
+  readonly createdAt: Prisma.FieldRef<"repository", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"repository", 'DateTime'>
 }
     
 

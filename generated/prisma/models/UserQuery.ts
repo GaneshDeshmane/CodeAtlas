@@ -27,22 +27,22 @@ export type AggregateUserQuery = {
 export type UserQueryMinAggregateOutputType = {
   id: string | null
   query: string | null
-  createdAT: Date | null
-  updated: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type UserQueryMaxAggregateOutputType = {
   id: string | null
   query: string | null
-  createdAT: Date | null
-  updated: Date | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type UserQueryCountAggregateOutputType = {
   id: number
   query: number
-  createdAT: number
-  updated: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -50,22 +50,22 @@ export type UserQueryCountAggregateOutputType = {
 export type UserQueryMinAggregateInputType = {
   id?: true
   query?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type UserQueryMaxAggregateInputType = {
   id?: true
   query?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type UserQueryCountAggregateInputType = {
   id?: true
   query?: true
-  createdAT?: true
-  updated?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -144,8 +144,8 @@ export type UserQueryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type UserQueryGroupByOutputType = {
   id: string
   query: string
-  createdAT: Date
-  updated: Date
+  createdAt: Date
+  updatedAt: Date
   _count: UserQueryCountAggregateOutputType | null
   _min: UserQueryMinAggregateOutputType | null
   _max: UserQueryMaxAggregateOutputType | null
@@ -172,15 +172,15 @@ export type UserQueryWhereInput = {
   NOT?: Prisma.UserQueryWhereInput | Prisma.UserQueryWhereInput[]
   id?: Prisma.StringFilter<"UserQuery"> | string
   query?: Prisma.StringFilter<"UserQuery"> | string
-  createdAT?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
-  updated?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
 }
 
 export type UserQueryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   query?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type UserQueryWhereUniqueInput = Prisma.AtLeast<{
@@ -189,15 +189,15 @@ export type UserQueryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserQueryWhereInput[]
   NOT?: Prisma.UserQueryWhereInput | Prisma.UserQueryWhereInput[]
   query?: Prisma.StringFilter<"UserQuery"> | string
-  createdAT?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
-  updated?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"UserQuery"> | Date | string
 }, "id">
 
 export type UserQueryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   query?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserQueryCountOrderByAggregateInput
   _max?: Prisma.UserQueryMaxOrderByAggregateInput
   _min?: Prisma.UserQueryMinOrderByAggregateInput
@@ -209,78 +209,78 @@ export type UserQueryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UserQueryScalarWhereWithAggregatesInput | Prisma.UserQueryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"UserQuery"> | string
   query?: Prisma.StringWithAggregatesFilter<"UserQuery"> | string
-  createdAT?: Prisma.DateTimeWithAggregatesFilter<"UserQuery"> | Date | string
-  updated?: Prisma.DateTimeWithAggregatesFilter<"UserQuery"> | Date | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserQuery"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserQuery"> | Date | string
 }
 
 export type UserQueryCreateInput = {
   id?: string
   query: string
-  createdAT: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type UserQueryUncheckedCreateInput = {
   id?: string
   query: string
-  createdAT: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type UserQueryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   query?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserQueryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   query?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserQueryCreateManyInput = {
   id?: string
   query: string
-  createdAT: Date | string
-  updated: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type UserQueryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   query?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserQueryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   query?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAT?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserQueryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   query?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type UserQueryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   query?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type UserQueryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   query?: Prisma.SortOrder
-  createdAT?: Prisma.SortOrder
-  updated?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 
@@ -288,32 +288,32 @@ export type UserQueryMinOrderByAggregateInput = {
 export type UserQuerySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   query?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["userQuery"]>
 
 export type UserQuerySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   query?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["userQuery"]>
 
 export type UserQuerySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   query?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["userQuery"]>
 
 export type UserQuerySelectScalar = {
   id?: boolean
   query?: boolean
-  createdAT?: boolean
-  updated?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type UserQueryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "query" | "createdAT" | "updated", ExtArgs["result"]["userQuery"]>
+export type UserQueryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "query" | "createdAt" | "updatedAt", ExtArgs["result"]["userQuery"]>
 
 export type $UserQueryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "UserQuery"
@@ -321,8 +321,8 @@ export type $UserQueryPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     query: string
-    createdAT: Date
-    updated: Date
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["userQuery"]>
   composites: {}
 }
@@ -748,8 +748,8 @@ export interface Prisma__UserQueryClient<T, Null = never, ExtArgs extends runtim
 export interface UserQueryFieldRefs {
   readonly id: Prisma.FieldRef<"UserQuery", 'String'>
   readonly query: Prisma.FieldRef<"UserQuery", 'String'>
-  readonly createdAT: Prisma.FieldRef<"UserQuery", 'DateTime'>
-  readonly updated: Prisma.FieldRef<"UserQuery", 'DateTime'>
+  readonly createdAt: Prisma.FieldRef<"UserQuery", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"UserQuery", 'DateTime'>
 }
     
 
