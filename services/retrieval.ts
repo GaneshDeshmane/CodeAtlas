@@ -1,3 +1,4 @@
+import type{respo}from'./types'
 const OLLAMA_API = process.env.OLLAMA_API
 export async function Retrieve(text : string) {
     async function generateEmbedding(query:string){
@@ -14,8 +15,8 @@ export async function Retrieve(text : string) {
         if (!result.ok) {
             throw new Error(`Ollama error: ${result.status}`)
         }
-        const respo = await result.json()
-        return respo.embedding 
+        const respo = await result.json() as respo
+        return respo.embedding
     }
    
     const embedding : number[] = await generateEmbedding(text)

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN
+import type{githubTreestrre , githubTreestr ,data ,GitHubFileResponse} from "./types"
 import{z} from "zod"
 export function githubParser(repository:string) {
     const link = new URL(repository)
@@ -30,13 +31,6 @@ export  async function githubMetadata(owner:string,repo:string) {
     if (!respo.ok) {
         throw new Error('error respo')
     }
-    type data={
-        name : string,
-        full_name : string,
-        description:string,
-        default_branch:string,
-        language:string
-    }
     const data = await respo.json() as data
     console.log(data.name)
     console.log(data.default_branch)
@@ -50,15 +44,6 @@ export  async function githubMetadata(owner:string,repo:string) {
     })
 }
 
-export type githubTreestr = {
-    path : string,
-    mode : string,
-    type : "blob" | "tree",
-    sha : string,
-}
-type githubTreestrre={
-    tree : githubTreestr[]
-}
 export async function githubTree(owner:string , repo : string , branch : string) {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,{
         headers:new Headers({
@@ -83,15 +68,6 @@ export async function githubTree(owner:string , repo : string , branch : string)
 //   )
     return files   
 }
-export type GitHubFileResponse = {
-    name: string;
-    path: string;
-    sha: string;
-    size: number;
-    content: string;
-    encoding: string;
-  };
-  
 export async function fileContent(owner :string,repo:string,branch:string,path:string){
     const respo = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`,{
         headers:new Headers({

@@ -1,4 +1,4 @@
-import {githubParser,githubMetadata,githubTree,fileContent,type GitHubFileResponse , type githubTreestr} from "./github"
+import {githubParser,githubMetadata,githubTree,fileContent,} from "./github"
 export async function processRepo(repository:string){
      const data = githubParser(repository)
         const owner=  data.owner
