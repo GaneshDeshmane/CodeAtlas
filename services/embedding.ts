@@ -20,21 +20,28 @@ export const storeRepo = async function (repository : string) {
         } 
     }
     )
-    const firstcontent=processdata.files[0]?.content
-    if (!firstcontent) {
-        throw new Error('file doesnt there')
-    }
-    const firstpath = processdata.files[0]?.path
-    if (!firstpath) {
-        throw new Error('file doesnt there')
-    }
-    await prisma.files.create({
+   
+   
+    for (let i = 0; i < processdata.files.length; i++) {
+        const firstpath = processdata.files[i]?.path
+        const firstcontent=processdata.files[i]?.content
+        if (!firstpath) {
+            throw new Error('file doesnt there')
+        }
+        if (!firstcontent) {
+            throw new Error('file doesnt there')
+        }
+         await prisma.files.create({
         data:{
             repositoryId:repositorydata.id,
             fileContent:firstcontent,
             path:firstpath
         }
     })
+    }
+    
+   
+   
 
 }
 
