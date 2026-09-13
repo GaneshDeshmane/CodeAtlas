@@ -98,6 +98,9 @@ Still early days. Roughly in order:
 - Auth
 - Eventually — let CodeAtlas suggest code changes and open PRs, with the user approving first
 
+## Architecture:
+<img width="1053" height="695" alt="Screenshot 2026-09-13 at 11 14 14 PM" src="https://github.com/user-attachments/assets/85e2d686-15ff-4c2f-940b-32944ea3a9b2" />
+
 ## Why I'm building this
 
 Mostly to learn by actually doing it, not by stitching together someone else's abstractions. Long term I want this to be something that genuinely understands a codebase and helps you work in it — not just another chatbot with your repo dumped into its context.
