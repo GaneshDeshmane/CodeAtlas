@@ -2,7 +2,9 @@ import dotenv from 'dotenv'
 dotenv.config()
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN
 import type{githubTreestrre , githubTreestr ,data ,GitHubFileResponse} from "./types"
+import { Supportdata } from './types'
 import{z} from "zod"
+
 export function githubParser(repository:string) {
     const link = new URL(repository)
     if(link.host!=="github.com"){
@@ -43,7 +45,6 @@ export  async function githubMetadata(owner:string,repo:string) {
         language: data.language
     })
 }
-
 export async function githubTree(owner:string , repo : string , branch : string) {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`,{
         headers:new Headers({
@@ -53,14 +54,23 @@ export async function githubTree(owner:string , repo : string , branch : string)
     if (!response.ok) {
         throw new Error('error respo')
     }
+   
+        
     const data = await response.json() as githubTreestrre
     //const files =data.tree.filter(
       //  (item)=>item.type==="blob"
     //)
-  const files= data.tree.filter(
-    (item)=>
-        item.type=="blob" && item.mode !=="120000"
-  )
+    const files = data.tree.filter((item) => {
+        const extension = item.path.split(".").pop();
+    
+        return (
+            item.type === "blob" &&
+            item.mode !== "120000" &&
+            extension !== undefined &&
+            Supportdata.includes(extension)
+        );
+    });
+
 //     const excludeFile=data.tree.filter(
 //         (item)=>(
 //         item.mode==="12000"
@@ -75,7 +85,7 @@ export async function fileContent(owner :string,repo:string,branch:string,path:s
         })
     })
     if (!respo.ok) {
-        throw new Error('error respo')
+        throw new Error(`error respo${respo.status}${respo.statusText}${await respo.text()}`)
     }
     const data = await respo.json() as GitHubFileResponse
     const respoType=z.object({

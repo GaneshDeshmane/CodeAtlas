@@ -29,3 +29,26 @@ export type GitHubFileResponse = {
 export type respo = {
     embedding : number[]
 }
+export const Supportdata=["ts",
+    "tsx",
+    "js",
+    "jsx",
+    "py",
+    "java",
+    "cpp",
+    "c",
+    "h",
+    "hpp",
+    "go",
+    "rs",
+    "rb",
+    "php",
+    "json",
+    "yaml",
+    "yml",
+    "md",
+    "txt",
+    "css",
+    "html",
+    "sql"
+    ]
