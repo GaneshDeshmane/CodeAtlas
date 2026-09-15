@@ -1,5 +1,6 @@
 import { processRepo } from "./repository"
 import { chuncking } from "./chunker"
+import{Retrieve , storeEmbedding}from'./retrieval'
 import type{ chunkModel ,repositoryModel,embeddingModel ,filesModel,UserQueryModel } from "../generated/prisma/models"
 import type{ embedding , chunk , repository , files , UserQuery } from "../generated/prisma/client"
 import { Prisma, PrismaClient } from "../generated/prisma/client"
@@ -48,13 +49,14 @@ export const storeRepo = async function (repository : string) {
        if (!chunks) {
         throw new Error('chunks error')
        }
-       await prisma.chunk.create({
+       const chunk=await prisma.chunk.create({
         data:{
             content:chunks,
             filesId:filedata.id,
             position:i
         }
     })
+    await storeEmbedding(chunk.chunkId, chunk.content)
     }
     
     }
