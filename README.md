@@ -1,102 +1,140 @@
 # CodeAtlas
 
-AI-powered codebase assistant that understands GitHub repositories using embeddings, vector search, and RAG.
+CodeAtlas is an AI-powered tool that understands a GitHub repository well enough to answer questions about it — grounded in the actual code, not guesses.
 
-**Status: work in progress**
+Give it a repository URL, let it index the code, then ask it things like *"What does the storeRepo function do?"* and get an answer that cites the real chunks of code it was drawn from.
 
-## What is this
+I'm building the whole pipeline myself — ingestion, chunking, embeddings, vector search, and retrieval-augmented generation — to actually understand how these pieces fit together, rather than relying on a framework that hides it.
 
-CodeAtlas is something I'm building to help understand GitHub repos without having to go through every single file by hand. The idea is simple — give it a repo URL, let it process the code, and eventually just ask it questions about the codebase and get answers based on what's actually in there, not just guesses.
+**Status: 🚧 Work in progress — core pipeline is functional end to end.**
 
-I'm building the whole pipeline myself instead of grabbing a RAG framework off the shelf, mainly because I want to actually understand how embeddings, vector search, and LLMs work together under the hood, not just call an API and hope it works.
+## What works right now
 
-## What's actually working right now
+- Parse a GitHub repository URL and fetch its metadata, default branch, and file tree
+- Filter to supported source files and pull their contents via the GitHub API
+- Split files into overlapping chunks (`RecursiveCharacterTextSplitter`)
+- Generate embeddings for every chunk locally via Ollama (`nomic-embed-text`, 768 dimensions)
+- Store repositories, files, chunks, and embeddings in PostgreSQL with `pgvector`
+- Run repository-scoped similarity search — retrieval is filtered to the correct repository, not just the closest match across everything ever ingested
+- Answer natural-language questions about a repository using retrieved code as context, via a local LLM (Ollama)
+- Expose ingestion and question-answering as HTTP endpoints (`/ingestion`, `/agent`)
+- A minimal React frontend to ingest a repo and ask it questions
 
-The repo-processing part is done and working. Right now CodeAtlas can:
-
-- Parse a GitHub repo URL
-- Pull the repo metadata
-- Figure out the default branch
-- Fetch the full repo tree
-- Find the actual files worth looking at
-- Fetch their contents
-- Split everything into chunks
-- Generate embeddings for those chunks
-
-I tested it on a real repo and it spat out 238 chunks, each one embedded as a 768-dimensional vector. So the pipeline works end to end, up to embeddings.
-
-What's missing: actually storing those embeddings somewhere and doing anything useful with them. That's the next chunk of work (pun intended).
-
-## How it flows right now
+## Current flow
 
 ```
 GitHub Repository
       ↓
-Repository Metadata
-      ↓
-Repository Tree
+Repository Metadata + Tree
       ↓
 File Contents
       ↓
 Chunking
       ↓
-Embeddings
+Embeddings (Ollama)
       ↓
-Vector Database   ← not built yet
+PostgreSQL + pgvector
       ↓
-RAG                ← not built yet
+Repository-scoped Retrieval
+      ↓
+LLM Answer (grounded in retrieved code, with sources)
 ```
 
-Everything down to Embeddings works. Vector DB and RAG are next.
+## Tech stack
 
-## Stack
-
-- TypeScript + Bun
-- Express
-- GitHub API
-- LangChain text splitters (for chunking)
-- Ollama + nomic-embed-text (for embeddings, running locally)
-- PostgreSQL + pgvector (coming soon)
+- TypeScript, Bun, Express
+- GitHub REST API
+- LangChain Text Splitters
+- Ollama — `nomic-embed-text` for embeddings, a local chat model (e.g. `llama3.2:1b`) for answers
+- PostgreSQL + `pgvector`
 - Prisma
+- React (frontend, Bun's built-in dev server)
 
-## Embeddings
+## Getting started
 
-Right now I'm using `nomic-embed-text` through Ollama, running locally. It turns each chunk of code into a 768-dimensional vector.
+### Prerequisites
+
+- [Bun](https://bun.com)
+- A PostgreSQL database with the `pgvector` extension enabled
+- [Ollama](https://ollama.com) running locally, with at least:
+  - `nomic-embed-text` pulled (embeddings)
+  - a small chat model pulled (answers), e.g. `ollama pull llama3.2:1b`
+- A GitHub personal access token (for higher API rate limits)
+
+### Setup
+
+```bash
+bun install
+
+# copy and fill in your own values
+cp .env.example .env
+```
+
+Required environment variables:
 
 ```
-code chunk → nomic-embed-text → [0.0387, -0.0156, -0.1517, ...] → 768 dims
+DATABASE_URL=your_postgres_connection_string
+GITHUB_TOKEN=your_github_token
+OLLAMA_API=http://localhost:11434
 ```
 
-## Folder layout
+Run database migrations:
 
+```bash
+bunx prisma migrate dev
 ```
-CodeAtlas/
-├── db/                 → db stuff
-├── frontend/           → frontend app
-├── prisma/             → schema + migrations
-├── generated/prisma/   → generated prisma client
-├── routes/             → express routes
-├── services/           → the actual pipeline logic
-├── index.ts            → entry point
-├── test-chunk.ts        → testing chunking
-├── test-embedding.ts    → testing embeddings
-└── test2.ts
+
+### Run the backend
+
+```bash
+bun index.ts
+```
+
+The API runs on `http://localhost:3000` by default.
+
+### Run the frontend
+
+```bash
+cd frontend
+bun run dev
+```
+
+The frontend runs on a separate port (see `frontend/src/index.ts`) and talks to the backend API.
+
+## API
+
+### `POST /ingestion`
+
+Ingests a GitHub repository: fetches its files, chunks them, embeds them, and stores everything.
+
+```bash
+curl -X POST http://localhost:3000/ingestion \
+  -H "Content-Type: application/json" \
+  -d '{"repository": "https://github.com/owner/repo"}'
+```
+
+### `POST /agent`
+
+Asks a question about an already-ingested repository. Returns an answer plus the source chunks it was grounded in.
+
+```bash
+curl -X POST http://localhost:3000/agent \
+  -H "Content-Type: application/json" \
+  -d '{"repository": "https://github.com/owner/repo", "question": "What does the storeRepo function do?"}'
 ```
 
 ## What's next
 
-Still early days. Roughly in order:
+- Better answer quality — currently limited by small, locally-run chat models; exploring larger models and reranking
+- Re-ingestion / upsert support (currently a repository can only be ingested once)
+- Batched embedding generation for faster ingestion on larger repositories
+- Code-aware chunking (splitting by function/class boundaries rather than raw text length)
+- Authentication and multi-user support
+- Automated PR creation — propose a fix grounded in retrieved code, open it as a branch + pull request for human review
 
-- Set up PostgreSQL
-- Add pgvector
-- Actually store the chunks + embeddings
-- Similarity search
-- Build the RAG pipeline
-- Let people ask questions about a repo and get real answers
-- Make chunking code-aware instead of just splitting blindly
-- Repo indexing
-- Auth
-- Eventually — let CodeAtlas suggest code changes and open PRs, with the user approving first
+## Why I'm building this
+
+I'm building CodeAtlas to learn by actually building the system — ingestion, embeddings, vector search, and RAG — rather than relying on ready-made abstractions to do it for me. The goal is a tool that can genuinely understand a codebase and help developers work with it, not just another wrapper around a chat model.
 
 ## Architecture:
 <img width="1053" height="695" alt="Screenshot 2026-09-13 at 11 14 14 PM" src="https://github.com/user-attachments/assets/85e2d686-15ff-4c2f-940b-32944ea3a9b2" />
