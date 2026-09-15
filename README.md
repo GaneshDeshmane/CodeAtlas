@@ -8,6 +8,11 @@ I'm building the whole pipeline myself — ingestion, chunking, embeddings, vect
 
 **Status: 🚧 Work in progress — core pipeline is functional end to end.**
 
+## Architecture:
+<img width="1053" height="695" alt="Screenshot 2026-09-13 at 11 14 14 PM" src="https://github.com/user-attachments/assets/85e2d686-15ff-4c2f-940b-32944ea3a9b2" />
+
+
+
 ## What works right now
 
 - Parse a GitHub repository URL and fetch its metadata, default branch, and file tree
@@ -135,10 +140,6 @@ curl -X POST http://localhost:3000/agent \
 ## Why I'm building this
 
 I'm building CodeAtlas to learn by actually building the system — ingestion, embeddings, vector search, and RAG — rather than relying on ready-made abstractions to do it for me. The goal is a tool that can genuinely understand a codebase and help developers work with it, not just another wrapper around a chat model.
-
-## Architecture:
-<img width="1053" height="695" alt="Screenshot 2026-09-13 at 11 14 14 PM" src="https://github.com/user-attachments/assets/85e2d686-15ff-4c2f-940b-32944ea3a9b2" />
-
 ## Why I'm building this
 
 Mostly to learn by actually doing it, not by stitching together someone else's abstractions. Long term I want this to be something that genuinely understands a codebase and helps you work in it — not just another chatbot with your repo dumped into its context.
