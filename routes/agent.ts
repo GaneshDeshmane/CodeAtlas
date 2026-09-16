@@ -20,7 +20,7 @@ agentRouter.post('/', async function (req, res) {
     if (typeof question !== 'string' || question.length === 0) {
         return res.status(400).json({ msg: 'question is required' })
     }
-
+    
     try {
         const repositoryRow = await prisma.repository.findUnique({
             where: { url: repository }
@@ -30,7 +30,6 @@ agentRouter.post('/', async function (req, res) {
                 msg: 'Repository not ingested yet. Call the ingest endpoint first.'
             })
         }
-
         const chunks = await Retrieve(question, repositoryRow.id) as {
             chunkId: number
             content: string
@@ -50,14 +49,12 @@ agentRouter.post('/', async function (req, res) {
             .join('\n\n---\n\n')
 
         const prompt = `You are a senior software engineer helping a user understand a codebase.
-
-Using ONLY the code context below, answer the user's question. Cite sources using [source N] notation. Do not invent code or files that are not shown to you. If the context doesn't contain enough information to answer, say so.
-
-Context:
-${context}
-
-Question: ${question}`
-
+    Using ONLY the code context below, answer the user's question. Cite sources using [source N] notation.
+    Do not invent code or files that are not shown to you.
+    If the context doesn't contain enough information to answer, say so.
+    Context:
+    ${context}
+    Question: ${question}`
         const ollamaResponse = await fetch(`${OLLAMA_API}/api/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -67,13 +64,10 @@ Question: ${question}`
                 stream: false
             })
         })
-
         if (!ollamaResponse.ok) {
             throw new Error(`Ollama error: ${ollamaResponse.status}`)
         }
-
-        const data = await ollamaResponse.json() as { response: string }
-
+        const data = await ollamaResponse.json() as {response: string}
         return res.json({
             answer: data.response,
             sources: chunks.map(c => ({

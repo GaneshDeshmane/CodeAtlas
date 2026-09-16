@@ -14,7 +14,6 @@ export const storeRepo = async function (repository : string) {
     // const file = processdata.files[0]?.content
     // const size =processdata.files[0]?.size
     //  const chunksdata = await chuncking(repository)
-    console.log("URL BEING INSERTED:", processdata.repository);
     const repositorydata = await prisma.repository.create({
         data:{
             name : processdata.metadata.name,
