@@ -8,7 +8,7 @@ declare module "*.svg" {
   export = path;
 }
 
-declare module "*.css" {}
+ declare module "*.css" {}
 
 declare module "*.module.css" {
   /**

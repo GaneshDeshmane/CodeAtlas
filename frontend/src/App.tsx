@@ -1,556 +1,368 @@
-import { useState, useEffect } from "react"
-
-const API_BASE = "http://localhost:3001"
-
-type Source = {
-  chunkId: number
-  position: number
-  similarity: number
-  preview: string
-}
-
-type AgentResponse = {
-  answer?: string
-  sources?: Source[]
-  msg?: string
-}
-
-type User = {
-  displayName?: string
-  emails?: { value: string }[]
-  [key: string]: unknown
-}
-
-type Status = "idle" | "ingesting" | "ingested" | "asking" | "error"
-
-export function App() {
-  const [repository, setRepository] = useState("")
-  const [question, setQuestion] = useState("")
-  const [status, setStatus] = useState<Status>("idle")
-  const [errorMsg, setErrorMsg] = useState("")
-  const [answer, setAnswer] = useState("")
-  const [sources, setSources] = useState<Source[]>([])
-  const [user, setUser] = useState<User | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
-
-  useEffect(() => {
-    fetch(`${API_BASE}/me`, { credentials: "include" })
-      .then((res) => {
-        if (!res.ok) throw new Error("not logged in")
-        return res.json()
-      })
-      .then((data) => setUser(data.user))
-      .catch(() => setUser(null))
-      .finally(() => setAuthLoading(false))
-  }, [])
-
-  function handleLogin() {
-    window.location.href = `${API_BASE}/login`
-  }
-
-  function handleLogout() {
-    window.location.href = `${API_BASE}/logout`
-  }
-
-  async function handleIngest() {
-    if (!repository.trim()) return
-    setStatus("ingesting")
-    setErrorMsg("")
-    try {
-      const res = await fetch(`${API_BASE}/ingestion`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repository: repository.trim() }),
-      })
-      const data: AgentResponse = await res.json()
-      if (!res.ok) {
-        setErrorMsg(data.msg ?? "Ingestion failed")
-        setStatus("error")
-        return
-      }
-      setStatus("ingested")
-    } catch {
-      setErrorMsg("Could not reach the server. Is it running on port 3001?")
-      setStatus("error")
-    }
-  }
-
-  async function handleAsk() {
-    if (!repository.trim() || !question.trim()) return
-    setStatus("asking")
-    setErrorMsg("")
-    setAnswer("")
-    setSources([])
-    try {
-      const res = await fetch(`${API_BASE}/agent`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          repository: repository.trim(),
-          question: question.trim(),
-        }),
-      })
-      const data: AgentResponse = await res.json()
-      if (!res.ok || !data.answer) {
-        setErrorMsg(data.msg ?? "Something went wrong answering that.")
-        setStatus("error")
-        return
-      }
-      setAnswer(data.answer)
-      setSources(data.sources ?? [])
-      setStatus("idle")
-    } catch {
-      setErrorMsg("Could not reach the server. Is it running on port 3001?")
-      setStatus("error")
-    }
-  }
-
-  const busy = status === "ingesting" || status === "asking"
-
-  return (
-    <div className="page">
-      <style>{css}</style>
-
-      <header className="masthead">
-        <div className="masthead-mark">Local-first RAG</div>
-        <h1>CodeAtlas</h1>
-        <p className="tagline">A map of a repository, made from the code itself.</p>
-
-        <div className="auth-bar">
-          {authLoading ? null : user ? (
-            <>
-              <span className="auth-user">
-                {user.displayName ?? user.emails?.[0]?.value ?? "Signed in"}
-              </span>
-              <button className="btn-link" onClick={handleLogout}>Log out</button>
-            </>
-          ) : (
-            <button className="btn-link" onClick={handleLogin}>Log in</button>
-          )}
-        </div>
-      </header>
-
-      <main className="layout">
-        <section className="panel">
-          <label className="field-label" htmlFor="repo">Repository</label>
-          <input
-            id="repo"
-            className="input"
-            type="text"
-            placeholder="https://github.com/owner/repo"
-            value={repository}
-            onChange={(e) => setRepository(e.target.value)}
-            disabled={busy}
-          />
-          <button
-            className="btn btn-secondary"
-            onClick={handleIngest}
-            disabled={busy || !repository.trim()}
-          >
-            {status === "ingesting" ? "Charting repository…" : "Chart this repository"}
-          </button>
-          {status === "ingested" && (
-            <p className="hint hint-ok">Ready. Ask something below.</p>
-          )}
-
-          <div className="divider" />
-
-          <label className="field-label" htmlFor="question">Question</label>
-          <textarea
-            id="question"
-            className="input textarea"
-            placeholder="What does the storeRepo function do?"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            disabled={busy}
-            rows={4}
-          />
-          <button
-            className="btn btn-primary"
-            onClick={handleAsk}
-            disabled={busy || !repository.trim() || !question.trim()}
-          >
-            {status === "asking" ? "Reading the code…" : "Ask"}
-          </button>
-
-          {status === "error" && <p className="hint hint-error">{errorMsg}</p>}
-        </section>
-
-        <section className="panel result-panel">
-          {!answer && status !== "asking" && (
-            <div className="empty">
-              <p>Chart a repository, then ask it something.</p>
-              <p className="empty-sub">The answer will cite the exact code it drew from.</p>
-            </div>
-          )}
-          {status === "asking" && (
-            <div className="empty">
-              <div className="spinner" />
-              Reading the code…
-            </div>
-          )}
-          {answer && (
-            <div className="answer-block">
-              <h2 className="answer-heading">Answer</h2>
-              <p className="answer">{answer}</p>
-              {sources.length > 0 && (
-                <div className="legend">
-                  <h3 className="legend-heading">Sources referenced</h3>
-                  {sources.map((s, i) => (
-                    <div className="legend-item" key={s.chunkId}>
-                      <div className="legend-index">source {i + 1}</div>
-                      <pre className="legend-code">{s.preview}</pre>
-                      <div className="legend-meta">
-                        match {(s.similarity * 100).toFixed(0)}%
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </section>
-      </main>
-    </div>
-  )
-}
-
-const css = `
-:root {
-  color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-
-body { margin: 0; }
-
-.page {
-  min-height: 100vh;
-  background: #0a0a0a;
-  color: #f2f2f2;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  padding: 56px 24px 96px;
-}
-
-.masthead {
-  max-width: 780px;
-  margin: 0 auto 44px;
-  text-align: left;
-}
-
-.masthead-mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #a3a3a3;
-  margin-bottom: 14px;
-}
-
-.masthead-mark::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #f2f2f2;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
-}
-
-.masthead h1 {
-  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  font-size: 2.6rem;
-  font-weight: 600;
-  letter-spacing: 0.005em;
-  margin: 0 0 8px;
-  color: #ffffff;
-  line-height: 1.1;
-}
-
-.tagline {
-  color: #8f8f8f;
-  font-size: 1.02rem;
-  margin: 0;
-  max-width: 46ch;
-  line-height: 1.5;
-}
-
-.layout {
-  max-width: 1000px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 780px) {
-  .layout { grid-template-columns: 1fr; }
-}
-
-.panel {
-  background: linear-gradient(180deg, #141414 0%, #101010 100%);
-  border: 1px solid #262626;
-  border-radius: 14px;
-  padding: 26px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.03) inset,
-    0 12px 32px -16px rgba(0, 0, 0, 0.7);
-}
-
-.field-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #9a9a9a;
-  margin-bottom: 9px;
-  letter-spacing: 0.01em;
-}
-
-.input {
-  width: 100%;
-  background: #070707;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  color: #f2f2f2;
-  padding: 11px 13px;
-  font-size: 0.94rem;
-  font-family: inherit;
-  margin-bottom: 14px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.input::placeholder { color: #4d4d4d; }
-
-.input:hover:not(:disabled) { border-color: #3a3a3a; }
-
-.input:focus {
-  outline: none;
-  border-color: #f2f2f2;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
-}
-
-.input:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.textarea { resize: vertical; line-height: 1.5; min-height: 96px; }
-
-.btn {
-  width: 100%;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 0.94rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
-  letter-spacing: 0.005em;
-}
-
-.btn:active:not(:disabled) { transform: translateY(1px); }
-.btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-.btn-primary {
-  background: linear-gradient(180deg, #ffffff 0%, #e6e6e6 100%);
-  color: #0a0a0a;
-  box-shadow: 0 4px 14px -6px rgba(255, 255, 255, 0.25);
-}
-.btn-primary:not(:disabled):hover {
-  background: linear-gradient(180deg, #ffffff 0%, #f2f2f2 100%);
-  box-shadow: 0 6px 18px -6px rgba(255, 255, 255, 0.35);
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 1px solid #333333;
-  color: #e0e0e0;
-}
-.btn-secondary:not(:disabled):hover {
-  border-color: #f2f2f2;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #2a2a2a 15%, #2a2a2a 85%, transparent);
-  margin: 22px 0;
-}
-
-.hint {
-  font-size: 0.83rem;
-  margin: 11px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hint::before { content: ""; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-
-.hint-ok { color: #d9d9d9; }
-.hint-ok::before { background: #d9d9d9; }
-
-.hint-error { color: #9a9a9a; }
-.hint-error::before { background: #9a9a9a; border: 1px solid #d9d9d9; }
-
-.result-panel {
-  min-height: 380px;
-  display: flex;
-  flex-direction: column;
-}
-
-.empty {
-  color: #666666;
-  font-size: 0.96rem;
-  padding: 64px 20px;
-  text-align: center;
-  margin: auto 0;
-}
-
-.empty-sub {
-  font-size: 0.85rem;
-  margin-top: 8px;
-  color: #404040;
-}
-
-.spinner {
-  width: 22px;
-  height: 22px;
-  border: 2px solid #2a2a2a;
-  border-top-color: #f2f2f2;
-  border-radius: 50%;
-  margin: 0 auto 16px;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.answer-block {
-  animation: fadeUp 0.3s ease-out;
-}
-
-.answer-heading {
-  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-  font-size: 1.15rem;
-  color: #ffffff;
-  margin: 0 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.answer-heading::before {
-  content: "";
-  width: 3px;
-  height: 16px;
-  background: #f2f2f2;
-  border-radius: 2px;
-}
-
-.answer {
-  font-size: 0.99rem;
-  line-height: 1.68;
-  color: #d9d9d9;
-  white-space: pre-wrap;
-  margin: 0 0 32px;
-}
-
-.legend {
-  border-top: 1px solid #1f1f1f;
-  padding-top: 22px;
-}
-
-.legend-heading {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #737373;
-  margin: 0 0 16px;
-}
-
-.legend-item {
-  position: relative;
-  padding: 4px 0 4px 18px;
-  margin-bottom: 18px;
-}
-
-.legend-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 2px;
-  bottom: 2px;
-  width: 2px;
-  background: linear-gradient(180deg, #f2f2f2, rgba(255, 255, 255, 0.15));
-  border-radius: 2px;
-}
-
-.legend-index {
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: #d9d9d9;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.legend-code {
-  background: #050505;
-  border: 1px solid #1f1f1f;
-  border-radius: 8px;
-  padding: 11px 13px;
-  font-family: "SF Mono", "JetBrains Mono", monospace;
-  font-size: 0.78rem;
-  line-height: 1.55;
-  color: #b3b3b3;
-  overflow-x: auto;
-  white-space: pre-wrap;
-  margin: 0 0 6px;
-}
-
-.legend-code::-webkit-scrollbar { height: 6px; }
-.legend-code::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
-
-.legend-meta {
-  font-size: 0.74rem;
-  color: #595959;
-  font-weight: 500;
-}
-
-
-/* ...all your existing CSS stays exactly the same... */
-
-.auth-bar {
-  margin-top: 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.auth-user {
-  font-size: 0.85rem;
-  color: #a3a3a3;
-}
-
-.btn-link {
-  background: transparent;
-  border: 1px solid #333333;
-  color: #e0e0e0;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease;
-}
-.btn-link:hover { border-color: #f2f2f2; }
-`
+// import React, { useEffect, useRef, useState } from "react";
+// import "./index.css";
+
+
+// const FAVICON_DATA_URI =
+//   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cg transform='rotate(-30 12 12)'%3E%3Ccircle cx='7.3' cy='3.2' r='1.45'/%3E%3Crect x='5.5' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Crect x='14.9' y='4.7' width='3.6' height='14.6' rx='1.8'/%3E%3Ccircle cx='16.7' cy='20.8' r='1.45'/%3E%3C/g%3E%3C/svg%3E";
+
+// const HERO_VIDEO_URL =
+//   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260818_072341_50851634-bbc3-4c33-9acc-7647d4db44aa.mp4";
+
+// const GOOGLE_FONTS_FALLBACK_HREF =
+//   "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&family=Instrument+Serif:ital@1&display=swap";
+
+// type NavItem = {
+//   label: string;
+//   href: string;
+//   appear: "appear--scale" | "appear--soft";
+//   delay: string;
+// };
+
+// const NAV_ITEMS: NavItem[] = [
+//   { label: "Benefits", href: "#benefits", appear: "appear--scale", delay: "0.16s" },
+//   { label: "How It Works", href: "#how-it-works", appear: "appear--soft", delay: "0.28s" },
+//   { label: "FAQs", href: "#faqs", appear: "appear--scale", delay: "0.40s" },
+//   { label: "Pricing", href: "#pricing", appear: "appear--soft", delay: "0.52s" },
+// ];
+
+// function LogoMark({ className }: { className?: string }) {
+//   return (
+//     <svg
+//       className={className}
+//       viewBox="0 0 24 24"
+//       fill="currentColor"
+//       aria-hidden="true"
+//       focusable="false"
+//     >
+//       <g transform="rotate(-30 12 12)">
+//         <circle cx="7.3" cy="3.2" r="1.45" />
+//         <rect x="5.5" y="4.7" width="3.6" height="14.6" rx="1.8" />
+//         <rect x="14.9" y="4.7" width="3.6" height="14.6" rx="1.8" />
+//         <circle cx="16.7" cy="20.8" r="1.45" />
+//       </g>
+//     </svg>
+//   );
+// }
+
+// function SparkleIcon() {
+//   return (
+//     <svg
+//       className="badge-star"
+//       width="18"
+//       height="20"
+//       viewBox="0 0 24 24"
+//       fill="white"
+//       aria-hidden="true"
+//       focusable="false"
+//     >
+//       <path d="M12 2.6C12.55 2.6 12.88 3.15 13.08 4.7c.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22C11.12 3.15 11.45 2.6 12 2.6Z" />
+//     </svg>
+//   );
+// }
+
+// function WorkflowStatIcon() {
+//   return (
+//     <svg className="stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+//       <defs>
+//         <linearGradient id="workflow-left" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+//           <stop offset="0" stopColor="#ffffff" stopOpacity="0.38" />
+//           <stop offset="1" stopColor="#3a3a3a" stopOpacity="0.62" />
+//         </linearGradient>
+//         <linearGradient id="workflow-right" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+//           <stop offset="0" stopColor="#3a3a3a" stopOpacity="0.38" />
+//           <stop offset="1" stopColor="#ffffff" stopOpacity="0.62" />
+//         </linearGradient>
+//       </defs>
+//       <rect x="3.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-left)" />
+//       <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-right)" />
+//       <rect x="9.2" y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a" />
+//     </svg>
+//   );
+// }
+
+// function DownloadStatIcon() {
+//   return (
+//     <svg className="stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+//       <rect x="2.4" y="2.4" width="19.2" height="19.2" rx="6.2" fill="#ffffff" />
+//       <path
+//         d="M12 7.1v7.4"
+//         stroke="#111111"
+//         strokeWidth="1.85"
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//         fill="none"
+//       />
+//       <path
+//         d="M8.15 12.35L12 16.2l3.85-3.85"
+//         stroke="#111111"
+//         strokeWidth="1.85"
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//         fill="none"
+//       />
+//     </svg>
+//   );
+// }
+
+// function AvatarsStatIcon() {
+//   return (
+//     <svg className="stat-icon-wide" viewBox="0 0 40 22" aria-hidden="true" focusable="false">
+//       {/* avatar 1 */}
+//       <circle cx="10.2" cy="11" r="9.2" fill="#2b2b2b" />
+//       <polygon points="4.6,5.4 6.6,3.4 7.4,6.4" fill="#2b2b2b" />
+//       <polygon points="15.8,5.4 13.8,3.4 13,6.4" fill="#2b2b2b" />
+//       <ellipse cx="10.2" cy="12.1" rx="4.15" ry="3.7" fill="#f4f4f4" />
+//       <circle cx="8.4" cy="11.6" r="0.7" fill="#1a1a1a" />
+//       <circle cx="12" cy="11.6" r="0.7" fill="#1a1a1a" />
+
+//       {/* avatar 2 */}
+//       <circle cx="20.2" cy="11" r="9.2" fill="#ffffff" />
+//       <circle cx="17.6" cy="10.6" r="1.7" fill="#111111" />
+//       <circle cx="22.8" cy="10.6" r="1.7" fill="#111111" />
+//       <ellipse cx="20.2" cy="13.4" rx="1.1" ry="0.8" fill="#c9c9c9" />
+//       <path
+//         d="M16.8 15.6c1 1.2 5.4 1.2 6.4 0"
+//         stroke="#111111"
+//         strokeWidth="1.2"
+//         strokeLinecap="round"
+//         fill="none"
+//       />
+
+//       {/* avatar 3 */}
+//       <circle cx="30.2" cy="11" r="9.2" fill="#f26b1d" />
+//       <text
+//         x="30.2"
+//         y="15.1"
+//         fontFamily="'Inter', system-ui, sans-serif"
+//         fontWeight={700}
+//         fontSize="12.5"
+//         textAnchor="middle"
+//         fill="#ffffff"
+//       >
+//         e
+//       </text>
+//     </svg>
+//   );
+// }
+
+// function Burger({ open, onClick }: { open: boolean; onClick: () => void }) {
+//   return (
+//     <button
+//       type="button"
+//       className="burger"
+//       aria-controls="site-nav"
+//       aria-expanded={open}
+//       aria-label={open ? "Close menu" : "Open menu"}
+//       onClick={onClick}
+//     >
+//       <span className="burger-bars">
+//         <span className="burger-bar burger-bar-1" />
+//         <span className="burger-bar burger-bar-2" />
+//         <span className="burger-bar burger-bar-3" />
+//       </span>
+//     </button>
+//   );
+// }
+
+// export default function CodeAtlasLanding() {
+//   const [menuOpen, setMenuOpen] = useState(false);
+//   const rootRef = useRef<HTMLDivElement>(null);
+
+//   useEffect(() => {
+//     document.title = "CodeAtlas.ai — Operational AI Infrastructure";
+//     document.documentElement.lang = "en";
+
+//     let link = document.querySelector<HTMLLinkElement>("link[rel='icon']");
+//     if (!link) {
+//       link = document.createElement("link");
+//       link.rel = "icon";
+//       document.head.appendChild(link);
+//     }
+//     link.href = FAVICON_DATA_URI;
+//   }, []);
+
+//   useEffect(() => {
+//     if (document.querySelector(`link[href="${GOOGLE_FONTS_FALLBACK_HREF}"]`)) return;
+//     const link = document.createElement("link");
+//     link.rel = "stylesheet";
+//     link.href = GOOGLE_FONTS_FALLBACK_HREF;
+//     document.head.appendChild(link);
+//   }, []);
+
+//   useEffect(() => {
+//     const root = rootRef.current;
+//     if (!root) return;
+
+//     const appearEls = Array.from(root.querySelectorAll<HTMLElement>(".appear, .hero-photo"));
+
+//     const handlers: Array<[HTMLElement, EventListener]> = [];
+//     appearEls.forEach((el) => {
+//       const handler = () => el.classList.add("is-in");
+//       el.addEventListener("animationend", handler, { once: true });
+//       handlers.push([el, handler]);
+//     });
+
+//     let raf1 = 0;
+//     let raf2 = 0;
+//     raf1 = requestAnimationFrame(() => {
+//       raf2 = requestAnimationFrame(() => {
+//         appearEls.forEach((el) => {
+//           const running = el
+//             .getAnimations()
+//             .some((a) => a.playState === "running" || a.playState === "finished");
+//           if (!running) el.classList.add("is-in");
+//         });
+//       });
+//     });
+
+//     return () => {
+//       handlers.forEach(([el, handler]) => el.removeEventListener("animationend", handler));
+//       cancelAnimationFrame(raf1);
+//       cancelAnimationFrame(raf2);
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     document.body.classList.toggle("menu-open", menuOpen);
+//   }, [menuOpen]);
+
+//   useEffect(() => {
+//     const onKeyDown = (e: KeyboardEvent) => {
+//       if (e.key === "Escape") setMenuOpen(false);
+//     };
+//     const onResize = () => {
+//       if (window.matchMedia("(min-width: 901px)").matches) setMenuOpen(false);
+//     };
+//     document.addEventListener("keydown", onKeyDown);
+//     window.addEventListener("resize", onResize);
+//     return () => {
+//       document.removeEventListener("keydown", onKeyDown);
+//       window.removeEventListener("resize", onResize);
+//     };
+//   }, []);
+
+//   const closeMenu = () => setMenuOpen(false);
+
+//   return (
+//     <div ref={rootRef} style={{ background: "#000", color: "#fff" }}>
+//       <div className="grain" aria-hidden="true" />
+
+//       <video
+//         className="hero-photo appear"
+//         style={{ ["--d" as string]: "0s" }}
+//         src={HERO_VIDEO_URL}
+//         autoPlay
+//         muted
+//         loop
+//         playsInline
+//         aria-hidden="true"
+//       />
+
+//       <div className="page">
+//         <div className="menu-backdrop" onClick={closeMenu} aria-hidden="true" />
+
+//         <header className="header">
+//           <a
+//             className="logo appear appear--scale"
+//             style={{ ["--d" as string]: "0.08s" }}
+//             href="#top"
+//             aria-label="Vesper.ai"
+//           >
+//             <LogoMark className="logo-mark" />
+//             <span>
+//               CodeAtlas<span className="logo-suffix">.ai</span>
+//             </span>
+//           </a>
+
+//           <nav id="site-nav" className="nav" aria-label="Primary">
+//             {NAV_ITEMS.map((item) => (
+//               <a
+//                 key={item.href}
+//                 href={item.href}
+//                 className={`nav-link appear ${item.appear}`}
+//                 style={{ ["--d" as string]: item.delay }}
+//                 onClick={closeMenu}
+//               >
+//                 {item.label}
+//               </a>
+//             ))}
+//           </nav>
+
+//           <div className="header-right">
+//             <a
+//               className="btn btn-solid header-cta appear appear--scale"
+//               style={{ ["--d" as string]: "0.34s" }}
+//               href="#start"
+//             >
+//               Start for Free
+//             </a>
+//             <Burger open={menuOpen} onClick={() => setMenuOpen((v) => !v)} />
+//           </div>
+//         </header>
+
+//         <main className="hero" id="top">
+//           <div className="hero-copy">
+//             <span className="badge appear appear--pop" style={{ ["--d" as string]: "0.22s" }}>
+//               <SparkleIcon />
+//               AI-Powered Code Intelligence
+//             </span>
+
+//             <h1 className="headline">
+//               <span
+//                 className="headline-line appear appear--mask"
+//                 style={{ ["--d" as string]: "0.42s" }}
+//               >
+//                 An AI engineering <em> agent</em> that understands your GitHub repository
+//               </span>
+//               <span
+//                 className="headline-line appear appear--mask"
+//                 style={{ ["--d" as string]: "0.62s" }}
+//               >
+//               </span>
+//             </h1>
+
+//             <p className="lede appear appear--soft" style={{ ["--d" as string]: "0.82s" }}>
+//             CodeAtlas understands your repository using code-aware retrieval,
+//             then helps you navigate, analyze, and improve it — from your first question to a validated Pull Request.
+//             </p>
+
+//             <div className="hero-actions">
+//               <a
+//                 className="btn btn-solid appear appear--btn"
+//                 style={{ ["--d" as string]: "0.96s" }}
+//                 href="#start"
+//               >
+//                 Start Improving
+//               </a>
+//               <a
+//                 className="btn btn-ghost appear appear--side"
+//                 style={{ ["--d" as string]: "1.10s" }}
+//                 href="#demo"
+//               >
+//                 See it in action
+//               </a>
+//             </div>
+//           </div>
+//         </main>
+
+//         <footer className="stats">
+//           <span className="stat appear appear--stat" style={{ ["--d" as string]: "1.12s" }}>
+//             <WorkflowStatIcon />
+//             Repository-aware
+//             Understand your actual codebase
+//           </span>
+//           <span className="stat appear appear--stat" style={{ ["--d" as string]: "1.28s" }}>
+//             <DownloadStatIcon />
+//             Grounded answers
+//             Every answer backed by source code
+//           </span>
+//           <span className="stat appear appear--stat" style={{ ["--d" as string]: "1.44s" }}>
+//             <AvatarsStatIcon />
+//             PR-ready
+//             Turn improvements into reviewable changes
+//           </span>
+//         </footer>
+//       </div>
+//     </div>
+//   );
+// }

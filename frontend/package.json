@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --hot --port 5173 src/index.html",
+    "dev": "bun run --hot server.ts",
     "start": "NODE_ENV=production bun src/index.tsx",
     "build": "bun run build.ts"
   },
