@@ -105,4 +105,14 @@ I'd rather list this stuff than have someone find it the hard way:
 
 ## Why I'm building this
 
-Mostly to learn by actually building it, instead of reaching for pre-made RAG frameworks and vector DB SDKs. The long-term goal is for CodeAtlas to genuinely understand a codebase and help you work in it — not just be another wrapper around a chatbot.
+Mostly to learn by actually doing it, not by stitching together someone else's abstractions. Long term I want this to be something that genuinely understands a codebase and helps you work in it — not just another chatbot with your repo dumped into its context.
+
+
+Still very much a work in progress. If you're poking around the code and something looks half-finished, that's because it is 😅
+
+## License
+
+CodeAtlas is licensed under the Apache License 2.0.
+
+See the [LICENSE](./LICENSE) file for details.
+

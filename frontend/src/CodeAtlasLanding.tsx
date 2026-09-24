@@ -17,10 +17,10 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Benefits", href: "#benefits", appear: "appear--scale", delay: "0.16s" },
-  { label: "How It Works", href: "#how-it-works", appear: "appear--soft", delay: "0.28s" },
-  { label: "FAQs", href: "#faqs", appear: "appear--scale", delay: "0.40s" },
-  { label: "Pricing", href: "#pricing", appear: "appear--soft", delay: "0.52s" },
+ // { label: "Benefits", href: "#benefits", appear: "appear--scale", delay: "0.16s" },
+  //{ label: "How It Works", href: "#how-it-works", appear: "appear--soft", delay: "0.28s" },
+  //{ label: "FAQs", href: "#faqs", appear: "appear--scale", delay: "0.40s" },
+  //{ label: "Pricing", href: "#pricing", appear: "appear--soft", delay: "0.52s" },
 ];
 
 function LogoMark({ className }: { className?: string }) {
@@ -81,65 +81,40 @@ function WorkflowStatIcon() {
 function DownloadStatIcon() {
   return (
     <svg className="stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="2.4" y="2.4" width="19.2" height="19.2" rx="6.2" fill="#ffffff" />
-      <path
-        d="M12 7.1v7.4"
-        stroke="#111111"
-        strokeWidth="1.85"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-      <path
-        d="M8.15 12.35L12 16.2l3.85-3.85"
-        stroke="#111111"
-        strokeWidth="1.85"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
-    </svg>
+    <defs>
+      <linearGradient id="workflow-left" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#ffffff" stopOpacity="0.38" />
+        <stop offset="1" stopColor="#3a3a3a" stopOpacity="0.62" />
+      </linearGradient>
+      <linearGradient id="workflow-right" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#3a3a3a" stopOpacity="0.38" />
+        <stop offset="1" stopColor="#ffffff" stopOpacity="0.62" />
+      </linearGradient>
+    </defs>
+    <rect x="3.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-left)" />
+    <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-right)" />
+    <rect x="9.2" y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a" />
+  </svg>
   );
 }
 
 function AvatarsStatIcon() {
   return (
-    <svg className="stat-icon-wide" viewBox="0 0 40 22" aria-hidden="true" focusable="false">
-      {/* avatar 1 */}
-      <circle cx="10.2" cy="11" r="9.2" fill="#2b2b2b" />
-      <polygon points="4.6,5.4 6.6,3.4 7.4,6.4" fill="#2b2b2b" />
-      <polygon points="15.8,5.4 13.8,3.4 13,6.4" fill="#2b2b2b" />
-      <ellipse cx="10.2" cy="12.1" rx="4.15" ry="3.7" fill="#f4f4f4" />
-      <circle cx="8.4" cy="11.6" r="0.7" fill="#1a1a1a" />
-      <circle cx="12" cy="11.6" r="0.7" fill="#1a1a1a" />
-
-      {/* avatar 2 */}
-      <circle cx="20.2" cy="11" r="9.2" fill="#ffffff" />
-      <circle cx="17.6" cy="10.6" r="1.7" fill="#111111" />
-      <circle cx="22.8" cy="10.6" r="1.7" fill="#111111" />
-      <ellipse cx="20.2" cy="13.4" rx="1.1" ry="0.8" fill="#c9c9c9" />
-      <path
-        d="M16.8 15.6c1 1.2 5.4 1.2 6.4 0"
-        stroke="#111111"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-        fill="none"
-      />
-
-      {/* avatar 3 */}
-      <circle cx="30.2" cy="11" r="9.2" fill="#f26b1d" />
-      <text
-        x="30.2"
-        y="15.1"
-        fontFamily="'Inter', system-ui, sans-serif"
-        fontWeight={700}
-        fontSize="12.5"
-        textAnchor="middle"
-        fill="#ffffff"
-      >
-        e
-      </text>
-    </svg>
+    <svg className="stat-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="workflow-left" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#ffffff" stopOpacity="0.38" />
+        <stop offset="1" stopColor="#3a3a3a" stopOpacity="0.62" />
+      </linearGradient>
+      <linearGradient id="workflow-right" x1="3" y1="2" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stopColor="#3a3a3a" stopOpacity="0.38" />
+        <stop offset="1" stopColor="#ffffff" stopOpacity="0.62" />
+      </linearGradient>
+    </defs>
+    <rect x="3.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-left)" />
+    <rect x="13.4" y="2.6" width="7.2" height="18.8" rx="3.6" fill="url(#workflow-right)" />
+    <rect x="9.2" y="10.9" width="5.6" height="2.2" rx="1.1" fill="#4a4a4a" />
+  </svg>
   );
 }
 
@@ -367,7 +342,7 @@ export default function CodeAtlasLanding({ signedIn = false, onPrimaryCta }: Cod
               <a
                 className="btn btn-ghost appear appear--side"
                 style={{ ["--d" as string]: "1.10s" }}
-                href="#demo"
+                href="/login"
               >
                 See it in action
               </a>

@@ -40,17 +40,21 @@ export async function Retrieve(text: string, repositoryId: number) {
   const embeddingVector = `[${embedding.join(",")}]`
 
   const resultQuery = await prisma.$queryRaw`
-      SELECT
-          c."chunkId",
-          c."content",
-          c."position",
-          1 - (e."data" <=> ${embeddingVector}::vector) AS similarity
-      FROM "embedding" e
-      JOIN "chunk" c ON c."chunkId" = e."chunkId"
-      JOIN "files" f ON f."id" = c."filesId"
-      WHERE f."repositoryId" = ${repositoryId}
-      ORDER BY e."data" <=> ${embeddingVector}::vector
-      LIMIT 3
-  `
+    SELECT
+      c."chunkId",
+      c."content",
+      c."position",
+      f."path",
+      1 - (e."data" <=> ${embeddingVector}::vector) AS similarity
+    FROM "embedding" e
+    JOIN "chunk" c
+      ON c."chunkId" = e."chunkId"
+    JOIN "files" f
+      ON f."id" = c."filesId"
+    WHERE f."repositoryId" = ${repositoryId}
+      AND f."path" !~ '(^|/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lockb)$'
+    ORDER BY e."data" <=> ${embeddingVector}::vector
+    LIMIT 5
+`;
   return resultQuery
 }

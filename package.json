@@ -3,6 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "liecense":"Apache-2.0",
   "devDependencies": {
     "@types/bun": "latest",
     "@types/express-session": "^1.19.0",
