@@ -56,36 +56,58 @@ import { searchCode } from "./tools";
    
 // }
 
-const tools = [{
-    "type":"function",
-    function:{
-    "name": "searchCode",
-    "description": "search Code in the repository",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "query": { "type": "string", "description": "user request" },
-        "repositoryId": { "type": "number" }
+const tools = [
+  {
+      type: "function",
+      function: {
+        name: "searchCode",
+        description:
+          "Search the repository for code matching the user's request. " +
+          "Use this tool whenever the user asks you to find or search code.",
+    
+        parameters: {
+          type: "object",
+          properties: {
+            query: {
+              type: "string",
+              description:
+                "The exact thing to search for, such as 'JWT authentication' " +
+                "or 'MongoDB connection'."
+            },
+    
+            repositoryId: {
+              type: "number",
+              description:
+                "The numeric ID of the repository to search."
+            }
+          },
+    
+          required: ["query", "repositoryId"]
+        }
+      }
+    },
+{
+  type: "function",
+  function: {
+    name: "readFile",
+    description: "Read code from the repository",
+    parameters: {
+      type: "object",
+      properties: {
+        workspace: {
+          type: "string",
+          description: "Workspace name"
+        },
+        filePath: {
+          type: "string",
+          description: "Path of the file to read"
+        }
       },
-      "required": ["query","repositoryId"]
-    }
-  }
-},{
-    "type":"function",
-    function:{
-    "name": "readFile",
-    "description": "read Code from the repository",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "workspace": { "type": "string", "description": "workspace name" },
-        "filePath": { "type": "string" }
-      },
-      "required": ["workspace","filePath"]
+      required: ["workspace", "filePath"]
     }
   }
 }
-]
+];
 
 export async function run(){
           const repo=await fetch("http://localhost:11434/api/chat",{
@@ -94,12 +116,38 @@ export async function run(){
         body:JSON.stringify({
             "model":"llama3.2:1b",
             "messages":[
-                {"role":"user","content":"Search repository 123 for JWT authentication code"}
+                {"role":"user",
+                  "content":"Search repository 123 for JWT authentication code"}
             ],
-            "tools":tools
+            "tools":tools,
+            stream:false,
         })
     })
     const data = await repo.json();
+    const Toolcall = data.message.tool_calls[0];
 
-    console.log(JSON.stringify(data, null, 2));
+    const toolName = Toolcall.function.name;
+    const args = Toolcall.function.arguments;
+    
+    if (toolName === "searchCode") {
+      const result = await searchCode(
+        args.query,
+        args.repositoryId
+      );
+    
+      console.log("Search result:", result);
+      
+      console.log(JSON.stringify(data, null, 2));
+      await fetch("http://localhost:11434/api/chat",{
+        method:"POST",
+        headers:{"Content-Type" : "application/json"},
+        body:JSON.stringify({
+          "model":"llama3.2:1b",
+          "messages":[
+            result
+          ],
+    })
+  })
+    }
+   
 }

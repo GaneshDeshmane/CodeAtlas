@@ -153,7 +153,7 @@ async function run() {
   const toolCalls = data.message?.tool_calls;
 
   if (!toolCalls || toolCalls.length === 0) {
-    console.log("\n❌ No tool call returned.");
+    console.log("\n No tool call returned.");
     console.log("The model answered without using a tool.");
     return;
   }
