@@ -6,6 +6,7 @@
 // `;
 import { searchCode } from "./tools";
  import { readFile } from "./tools";
+ console.log("OLLAMA_API:", process.env.OLLAMA_API);
 // export class agent{
 //     constructor(repositoryId:number,request:string){
 //         this.repositoryId=repositoryId;
@@ -125,7 +126,7 @@ export async function run(){
     })
     const data = await repo.json();
     const Toolcall = data.message.tool_calls[0];
-
+    console.log(JSON.stringify(data, null, 2));
     const toolName = Toolcall.function.name;
     const args = Toolcall.function.arguments;
     
@@ -138,16 +139,31 @@ export async function run(){
       console.log("Search result:", result);
       
       console.log(JSON.stringify(data, null, 2));
-      await fetch("http://localhost:11434/api/chat",{
+      const repo2=await fetch("http://localhost:11434/api/chat",{
         method:"POST",
         headers:{"Content-Type" : "application/json"},
         body:JSON.stringify({
           "model":"llama3.2:1b",
           "messages":[
-            result
+            {"role":"user",
+              "content":"Search repository 80 for JWT authentication code"},
+            {"role":"assistant","content":data.message.content||"",tool_calls:data.message.tool_calls},
+            {
+              "role":"tool",
+              "content":JSON.stringify(result)
+            }
           ],
+          "tools":tools
     })
   })
+  // const data2=await repo2.json()
+  const raw = await repo2.text()
+  console.log("SECOND RESPONSE:");
+console.log(raw);
+  // console.log(JSON.stringify(data2, null, 2));
+  // console.log(JSON.stringify(data2.message.tool_calls))
     }
-   
 }
+
+
+run()
