@@ -4,8 +4,10 @@
 // You are a helpful assistant that can help with code search and code generation.
 // You are given a repository id, a query, and a request. The request is a description of the code you need to generate.based on the query determine what tools you have to use to generate the code.
 // `;
-import { ru } from "zod/v4/locales";
-import { askAgent } from "../frontend/src/api";
+
+
+
+
 import { searchCode } from "./tools";
  import { readFile } from "./tools";
  console.log("OLLAMA_API:", process.env.OLLAMA_API);
@@ -65,9 +67,10 @@ const tools = [
       function: {
         name: "searchCode",
         description:
-          "Search the repository for code matching the user's request. " +
-          "Use this tool whenever the user asks you to find or search code.",
-    
+        "Search the repository for relevant code. " +
+        "The result includes the exact repository file paths. " +
+        "When you need to inspect a file, use the exact 'path' value returned by this tool. " +
+        "Never invent or guess a file path.",
         parameters: {
           type: "object",
           properties: {
@@ -93,7 +96,10 @@ const tools = [
   type: "function",
   function: {
     name: "readFile",
-    description: "Read code from the repository",
+    description:
+    "Read an existing file from the repository. " +
+    "filePath MUST exactly match a path returned by searchCode. " +
+    "Never invent a file path.",
     parameters: {
       type: "object",
       properties: {
@@ -113,75 +119,118 @@ const tools = [
 ];
 
 export async function run(query:string,repositoryId:number,workspace:string){
-          const repo=await fetch("http://localhost:11434/api/chat",{
-        method : "POST",
-        headers:{"Content-Type": "application/json"},
-        body:JSON.stringify({
-            "model":"qwen2.5:3b",
-            "messages":[
-                {"role":"user",
-                  "content":query}
-            ],
-            "tools":tools,
-            stream:false,
-        })
-    })
-    const data = await repo.json();
-    const Toolcall = data.message.tool_calls[0];
-    console.log(JSON.stringify(data, null, 2));
-    if(Toolcall){
-      const toolName = Toolcall.function.name;
-    const args = Toolcall.function.arguments;
-    
-    if (toolName === "searchCode") {
-      const result = await searchCode(
-        args.query,
-        repositoryId
-      );
-    
-      console.log("Search result:", result);
-      
-      console.log(JSON.stringify(data, null, 2));
-
-      // while(true){
-        
-      //   if (!toolName) {
-      //     return data
-      //   }
-      //   for (let i = 0; i < Toolcall.length; i++) {
-          
-          
-      //   }
-      // }
-      const repo2=await fetch("http://localhost:11434/api/chat",{
-        method:"POST",
-        headers:{"Content-Type" : "application/json"},
-        body:JSON.stringify({
-          "model":"qwen2.5:3b",
-          "messages":[
-            {"role":"user",
-              "content":query},
-            {"role":"assistant","content":data.message.content||"",tool_calls:data.message.tool_calls},
-            {
-              "role":"tool",
-              "content":JSON.stringify(result),
-              tool_call_id:data.message.tool_calls[0].id
-            }
-          ],
-          "tools":tools,
-          stream :false
-    })
-  })
-  const data2=await repo2.json()
-  const Toolcall2=data2.message.tool_calls
-  console.log(JSON.stringify(data2, null, 2));
-  if (Toolcall2){
-    
-  }
-  //const raw = await repo2.text()
-    }else{
-      return data.message.content
+  const messages = [
+    {
+      role: "user",
+      content: query
     }
+  ];
+      while(true){
+        console.log(
+          "MESSAGES:",
+          JSON.stringify(messages, null, 2)
+        );
+        const repo=await fetch("http://localhost:11434/api/chat",{
+          method : "POST",
+          headers:{"Content-Type": "application/json"},
+          body:JSON.stringify({
+              "model":"qwen2.5:3b",
+              // "messages":[
+              //     {"role":"user",
+              //       "content":query}
+              // ],
+              messages,
+              "tools":tools,
+              stream:false,
+          })
+      })
+      const data = await repo.json();
+      const toolCalls=data.message.tool_calls
+      //const Toolcall = data.message.tool_calls[0];
+      if (!toolCalls||toolCalls.length==0) {
+        return data.message.content
+      }
+      messages.push({
+        role:"assistant",
+        content:data.message.content||"",
+        tool_calls:toolCalls
+      })
+      for(const toolCall of toolCalls){
+        const toolName=toolCall.function.name;
+        const args = toolCall.function.arguments
+      
+      let result;
+      if (toolName === "searchCode") {
+         result = await searchCode(
+          args.query,
+          repositoryId
+        )}else if(toolName==="readFile"){
+          result=await readFile(workspace,args.filePath)
+        }else{
+          result = {
+            error: `Unknown tool: ${toolName}`
+          };
+        }
+      // console.log(JSON.stringify(data, null, 2));
+      // if(Toolcall){
+      //   const toolName = Toolcall.function.name;
+      // const args = Toolcall.function.arguments;
+      
+     
+      
+        console.log("Search result:", result);
+        
+        console.log(JSON.stringify(data, null, 2));  
+        console.log("Tool:", toolName);
+  console.log("Result:", result);
+
+  messages.push({
+    role: "tool",
+    content: JSON.stringify(result),
+    tool_call_id: toolCall.id
+  });
+}
+        // if (!toolCalls || toolCalls.length === 0) {
+        //   return data.message.content;
+        // }
+        // messages.push({
+        //   role: "assistant",
+        //   content: data.message.content || "",
+        //   tool_calls: toolCalls
+        // });
+        // for (let i = 0; i < toolCalls.length; i++) {
+          
+        // }
+      }
+  //     const repo2=await fetch("http://localhost:11434/api/chat",{
+  //       method:"POST",
+  //       headers:{"Content-Type" : "application/json"},
+  //       body:JSON.stringify({
+  //         "model":"qwen2.5:3b",
+  //         "messages":[
+  //           {"role":"user",
+  //             "content":query},
+  //           {"role":"assistant","content":data.message.content||"",tool_calls:data.message.tool_calls},
+  //           {
+  //             "role":"tool",
+  //             "content":JSON.stringify(result),
+  //             tool_call_id:data.message.tool_calls[0].id
+  //           }
+  //         ],
+  //         "tools":tools,
+  //         stream :false
+  //   })
+  // })
+  // const data2=await repo2.json()
+  // const Toolcall2=data2.message.tool_calls
+  // console.log(JSON.stringify(data2, null, 2));
+  // if (Toolcall2){
+    
+  // }
+  //const raw = await repo2.text()
+    // }else{
+    //   return data.message.content
+    // }
     
       
    
@@ -190,10 +239,10 @@ export async function run(query:string,repositoryId:number,workspace:string){
   // console.log(JSON.stringify(data2, null, 2));
   // console.log(JSON.stringify(data2.message.tool_calls))
     }
-}
+
 
 run(
   "Find where JWT authentication is implemented in this repository and read the relevant authentication file, then explain how it works.",
-  82,
+  87,
   "/tmp/codeatlas/your-workspace"
 );
