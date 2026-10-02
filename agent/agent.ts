@@ -1,65 +1,9 @@
-// import type{ UseToolresponse } from "./type";
-// import{z}from "zod";
-// const prompt=`
-// You are a helpful assistant that can help with code search and code generation.
-// You are given a repository id, a query, and a request. The request is a description of the code you need to generate.based on the query determine what tools you have to use to generate the code.
-// `;
-
-
-
 
 import { searchCode } from "./tools";
  import { readFile } from "./tools";
+ import{repositoryTool}from"../gitservice/service/repositoryTool"
+import { editFile } from "./tools";
  console.log("OLLAMA_API:", process.env.OLLAMA_API);
-// export class agent{
-//     constructor(repositoryId:number,request:string){
-//         this.repositoryId=repositoryId;
-//         this.request=request;
-//     async function run() {
-//         const Usetool=await fetch("http://localhost:11434/api/generate",{
-//             method : "POST",
-//             headers:{
-//                 "Content-Type": "application/json",
-//             },
-//             body:JSON.stringify({
-//                 "model":"llama3.1:8b",
-//                 "prompt":`${prompt}query${this.request} `, 
-//             })
-//         })
-//         const UseToolresponse=await Usetool.json();
-//         const UseToolresponseSchema=z.object({
-//             model:z.string(),
-//             prompt:z.string(),
-//             query:z.string(),
-//             })
-//         const parsedUseToolresponse=UseToolresponseSchema.parse(UseToolresponse);
-//         const code=await searchCode(parsedUseToolresponse as UseToolresponse,this.repositoryId);
-//         const readCode=await readFile(code);
-//         const codegenerated=await llmCall(readCode,parsedUseToolresponse as UseToolresponse);
-//         return codegenerated;
-//     }
-
-//         async function llmCall(content:string,query:UseToolresponse){
-//             const repo=await fetch("http://localhost:11434/api/generate",{
-//                 method:"POST",
-//                 headers:{
-//                     "Content-Type": "application/json",
-//                 },
-//                 body:JSON.stringify({
-//                     "model":"llama3.1:8b",
-//                     "prompt":`${prompt}
-//                     query: ${UseToolresponse}
-//                     Repository ID: ${this.repositoryId}
-//                     Request: ${this.request}
-//                     `,
-//                 })
-//             })
-//             const data=await repo.json();
-//             return data.response;
-//         }
-//     }
-   
-// }
 
 const tools = [
   {
@@ -77,8 +21,8 @@ const tools = [
             query: {
               type: "string",
               description:
-                "The exact thing to search for, such as 'JWT authentication' " +
-                "or 'MongoDB connection'."
+                "The exact thing to search for, such as 'organisation route' " +
+                "or 'user route' or 'task route' or 'board route'."
             },
     
             // repositoryId: {
@@ -115,17 +59,80 @@ const tools = [
       required: ["filePath"]//"workspace"
     }
   }
+},{
+  type: "function",
+  function: {
+    name: "editFile",
+    description:
+    "Edit an existing file in the repository. " +
+    "filePath MUST exactly match a path returned by searchCode. " +
+    "Never invent a file path.",
+    parameters: {
+      type: "object",
+      properties: {
+        filePath: {
+          type: "string",
+          description: "Path of the file to edit"
+        },
+        oldCode: {
+          type: "string",
+          description: "The old code to replace"
+        },
+        newCode: {
+          type: "string",
+          description: "The new code to replace the old code"
+        }
+      },
+      required: ["filePath", "oldCode", "newCode"]
+    }
+  }
 }
 ];
 
-export async function run(query:string,repositoryId:number,workspace:string){
+export async function run(query:string,repositoryId:number,workspace:string,repository:string){
   const messages = [
+    {
+      role: "system",
+      content: `
+ When working with repository code:
+
+1. Use searchCode to find relevant files.
+2. Inspect the search results.
+3. Select an exact path returned by searchCode.
+4. Use that exact path with readFile.
+5. Never invent, guess, or construct a file path.
+6. Do not use readFile until searchCode has returned a real path.
+7. If the user only asks a question, answer once you have enough information.
+8. If the user asks you to modify code, inspect the relevant file first and then use editFile.
+9. For editFile, use the exact filePath returned by searchCode.
+10. oldCode must come from the actual contents returned by readFile.
+11. Do not read the same file more than once unless necessary.
+12. For a modification request:
+
+1. Search for the relevant file.
+2. Read the file.
+3. After reading the relevant file, you MUST call editFile to perform the requested modification.
+4. Do not answer the user before the requested modification has been performed.
+5. For editFile, oldCode must be a small exact substring copied from readFile.
+6. newCode must implement exactly the requested change.
+
+13. Do not use editFile until searchCode has returned a real path.
+14. Do not perform additional searches once the relevant files have been identified and read.
+15. For a question, once you have enough information, give the final answer. For a modification request, continue using the necessary tools until the requested modification is completed.
+16.For editFile, keep oldCode as small and specific as possible. It must be an exact substring copied from the file returned by readFile. Do not use the entire file as oldCode`
+    },
     {
       role: "user",
       content: query
     }
   ];
-      while(true){
+  const clonerepo = await repositoryTool(repository,workspace)
+  if(clonerepo.success){
+    let count:number=0;
+    const max_count:number=10;
+      while(count<max_count){
+        count=count+1;
+        console.log("Count:", count);
         console.log(
           "MESSAGES:",
           JSON.stringify(messages, null, 2)
@@ -166,6 +173,8 @@ export async function run(query:string,repositoryId:number,workspace:string){
           repositoryId
         )}else if(toolName==="readFile"){
           result=await readFile(workspace,args.filePath)
+        }else if(toolName==="editFile"){
+          result=await editFile(workspace,args.filePath,args.oldCode,args.newCode)
         }else{
           result = {
             error: `Unknown tool: ${toolName}`
@@ -190,59 +199,18 @@ export async function run(query:string,repositoryId:number,workspace:string){
     tool_call_id: toolCall.id
   });
 }
-        // if (!toolCalls || toolCalls.length === 0) {
-        //   return data.message.content;
-        // }
-        // messages.push({
-        //   role: "assistant",
-        //   content: data.message.content || "",
-        //   tool_calls: toolCalls
-        // });
-        // for (let i = 0; i < toolCalls.length; i++) {
-          
-        // }
+console.log("Messages:", JSON.stringify(messages, null, 2));
       }
-  //     const repo2=await fetch("http://localhost:11434/api/chat",{
-  //       method:"POST",
-  //       headers:{"Content-Type" : "application/json"},
-  //       body:JSON.stringify({
-  //         "model":"qwen2.5:3b",
-  //         "messages":[
-  //           {"role":"user",
-  //             "content":query},
-  //           {"role":"assistant","content":data.message.content||"",tool_calls:data.message.tool_calls},
-  //           {
-  //             "role":"tool",
-  //             "content":JSON.stringify(result),
-  //             tool_call_id:data.message.tool_calls[0].id
-  //           }
-  //         ],
-  //         "tools":tools,
-  //         stream :false
-  //   })
-  // })
-  // const data2=await repo2.json()
-  // const Toolcall2=data2.message.tool_calls
-  // console.log(JSON.stringify(data2, null, 2));
-  // if (Toolcall2){
-    
-  // }
-  //const raw = await repo2.text()
-    // }else{
-    //   return data.message.content
-    // }
-    
-      
-   
-//   console.log("SECOND RESPONSE:");
-// console.log(raw);
-  // console.log(JSON.stringify(data2, null, 2));
-  // console.log(JSON.stringify(data2.message.tool_calls))
+    }else{
+      console.log("Repository not cloned")
+      return
     }
+  }
 
 
-run(
-  "Find where JWT authentication is implemented in this repository and read the relevant authentication file, then explain how it works.",
-  87,
-  "/tmp/codeatlas/your-workspace"
-);
+    run(
+      "find the organisation route in the trello backend repository and add and change the status code to 200",
+      87,
+      "/tmp/codeatlas/your-workspace",
+      "https://github.com/GaneshDeshmane/Trello-Backend"
+    );
