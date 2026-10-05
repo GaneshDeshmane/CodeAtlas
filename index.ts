@@ -1,6 +1,6 @@
 import agentRouter from "./routes/agent";
 import ingestRouter from "./routes/ingest";
-import userRouter from "./routes/user";
+import {userRouter} from "./routes/user";
 import "dotenv/config";
 import express from 'express'
 const app = express()

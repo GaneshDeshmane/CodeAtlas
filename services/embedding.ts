@@ -9,7 +9,7 @@ import { fileContent } from "./github"
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({adapter})
 export const storeRepo = async function (repository : string) {
-    console.log("DATABASE:", process.env.DATABASE_URL)
+    // console.log("DATABASE:", process.env.DATABASE_URL)
     const processdata = await processRepo(repository)
     // const file = processdata.files[0]?.content
     // const size =processdata.files[0]?.size

@@ -56,4 +56,4 @@ userRouter.get("/me", (req, res) => {
   res.json({ user: req.user });
 });
 
-export default userRouter;
+export { userRouter };
