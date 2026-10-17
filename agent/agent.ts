@@ -3,6 +3,7 @@ import { searchCode } from "./tools";
  import { readFile } from "./tools";
  import{repositoryTool}from"../gitservice/service/repositoryTool"
 import { editFile } from "./tools";
+import { getDiff } from "../gitservice/service/getDiff";
 import { message } from "./systemPrompt";
 import{tools}from"./toolPrompt"
  console.log("OLLAMA_API:", process.env.OLLAMA_API);
@@ -34,7 +35,7 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
           method : "POST",
           headers:{"Content-Type": "application/json"},
           body:JSON.stringify({
-              "model":"qwen2.5:3b",
+              "model":"qwen3.5:4b",
               // "messages":[
               //     {"role":"user",
               //       "content":query}
@@ -45,7 +46,9 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
           })
       })
       const data = await repo.json();
+      console.log(data)
       const toolCalls=data.message.tool_calls
+      console.log(data)
       //const Toolcall = data.message.tool_calls[0];
       if (!toolCalls||toolCalls.length==0) {
         return data.message.content
@@ -79,7 +82,13 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
           result=await readFile(workspace,args.filePath)
         }
         }else if(toolName==="editFile"){
+          if(knownPath.has(args.filePath)){
           result=await editFile(workspace,args.filePath,args.oldCode,args.newCode)
+          }else{
+            result = {
+              error: `Invalid file path: ${args.filePath}. The path was not returned by searchCode.`
+          }
+          }
         }else{
           result = {
             error: `Unknown tool: ${toolName}`
@@ -109,12 +118,19 @@ console.log("Messages:", JSON.stringify(messages, null, 2));
       console.log("Repository not cloned")
       return
     }
+    const GitDiff = await getDiff(workspace)
+    console.log(GitDiff)
+    if(GitDiff){
+      console.log(`code editted`)
+    }else{
+      console.log(`error code edit`)
+    }
   }
 
 
-    run(
-      "edit the organisation route in the trello backend repository and change the status code to 200",
-      87,
-      "/tmp/codeatlas/your-workspace",
-      "https://github.com/GaneshDeshmane/Trello-Backend"
-    );
+    // run(
+    //   "edit the post organisation route in the trello backend repository and change the status code to 600",
+    //   90,
+    //   "/tmp/codeatlas/your-workspace",
+    //   "https://github.com/GaneshDeshmane/Trello-Backend"
+    // );
