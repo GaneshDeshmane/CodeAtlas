@@ -4,10 +4,12 @@ import { searchCode } from "./tools";
  import{repositoryTool}from"../gitservice/service/repositoryTool"
 import { editFile } from "./tools";
 import { getDiff } from "../gitservice/service/getDiff";
+import { gitCommit } from "../gitservice/service/commit";
+import { branch } from "../gitservice/service/Branch";
 import { message } from "./systemPrompt";
 import{tools}from"./toolPrompt"
  console.log("OLLAMA_API:", process.env.OLLAMA_API);
-export async function run(query:string,repositoryId:number,workspace:string,repository:string){
+export async function run(query:string,repositoryId:number,workspace:string,repository:string,userMessage:string){
   const messages = [
     {
       role: "system",
@@ -51,7 +53,8 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
       console.log(data)
       //const Toolcall = data.message.tool_calls[0];
       if (!toolCalls||toolCalls.length==0) {
-        return data.message.content
+        const valuemessage = data.message.content
+        return
       }
       messages.push({
         role:"assistant",
@@ -112,19 +115,23 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
     content: JSON.stringify(result),
     tool_call_id: toolCall.id
   });
+  const GitDiff = await getDiff(workspace)
+  console.log(GitDiff)
+  if(GitDiff){
+    console.log(`code editted`)
+  }else{
+    console.log(`error code edit`)
+  }
+  
+  const commit = gitCommit(args.files ,userMessage)
 }
 console.log("Messages:", JSON.stringify(messages, null, 2));
       }else{
       console.log("Repository not cloned")
       return
     }
-    const GitDiff = await getDiff(workspace)
-    console.log(GitDiff)
-    if(GitDiff){
-      console.log(`code editted`)
-    }else{
-      console.log(`error code edit`)
-    }
+  
+
   }
 
 
