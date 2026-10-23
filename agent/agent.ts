@@ -1,15 +1,27 @@
 
 import { searchCode } from "./tools";
- import { readFile } from "./tools";
- import{repositoryTool}from"../gitservice/service/repositoryTool"
+import { readFile } from "./tools";
+import { repositoryTool } from "../gitservice/service/repositoryTool";
 import { editFile } from "./tools";
 import { getDiff } from "../gitservice/service/getDiff";
 import { gitCommit } from "../gitservice/service/commit";
 import { branch } from "../gitservice/service/Branch";
+import { gitPush } from "../gitservice/service/push";
+import { createPullRequest } from "../gitservice/service/pull";
 import { message } from "./systemPrompt";
-import{tools}from"./toolPrompt"
- console.log("OLLAMA_API:", process.env.OLLAMA_API);
-export async function run(query:string,repositoryId:number,workspace:string,repository:string,userMessage:string){
+import { tools } from "./toolPrompt";
+
+console.log("OLLAMA_API:", process.env.OLLAMA_API);
+
+export async function run(
+  query: string,
+  repositoryId: number,
+  workspace: string,
+  repository: string,
+  userMessage: string,
+  owner: string,
+  repositoryName: string
+) {
   const messages = [
     {
       role: "system",
@@ -18,126 +30,195 @@ export async function run(query:string,repositoryId:number,workspace:string,repo
     {
       role: "user",
       content: query
-    },
+    }
   ];
-  const clonerepo = await repositoryTool(repository,workspace)
+
+  const clonerepo = await repositoryTool(repository, workspace);
   console.log("Clone repository:", clonerepo);
-  if(clonerepo.success){
-    let count:number=0;
-    const max_count:number=10;
-    const knownPath = new Set<string>
-      while(count<max_count){
-        count=count+1;
-        console.log("Count:", count);
-        console.log(
-          "MESSAGES:",
-          JSON.stringify(messages, null, 2)
-        );
-        const repo=await fetch("http://localhost:11434/api/chat",{
-          method : "POST",
-          headers:{"Content-Type": "application/json"},
-          body:JSON.stringify({
-              "model":"qwen3.5:4b",
-              // "messages":[
-              //     {"role":"user",
-              //       "content":query}
-              // ],
-              messages,
-              "tools":tools,
-              stream:false,
-          })
-      })
-      const data = await repo.json();
-      console.log(data)
-      const toolCalls=data.message.tool_calls
-      console.log(data)
-      //const Toolcall = data.message.tool_calls[0];
-      if (!toolCalls||toolCalls.length==0) {
-        const valuemessage = data.message.content
-        return
+
+  if (clonerepo.success) {
+    const branchName = `codeatlas/task-${Date.now()}`;
+    const createBranch = await branch(workspace, branchName);
+
+    if (!createBranch.success) {
+      return { success: false, message: "Branch creation failed" };
+    }
+
+    let count: number = 0;
+    const max_count: number = 10;
+    const knownPath = new Set<string>();
+    const changedFiles = new Set<string>();
+    let valuemessage = "";
+
+    while (count < max_count) {
+      count = count + 1;
+
+      console.log("Count:", count);
+      console.log("MESSAGES:", JSON.stringify(messages, null, 2));
+
+      const repo = await fetch("http://localhost:11434/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "qwen3.5:4b",
+          messages,
+          tools: tools,
+          stream: false
+        })
+      });
+
+      if (!repo.ok) {
+        return {
+          success: false,
+          message: `Ollama request failed: ${repo.status}`
+        };
       }
+
+      const data = await repo.json();
+      console.log(data);
+
+      const toolCalls = data.message?.tool_calls;
+
+      if (!toolCalls || toolCalls.length === 0) {
+        valuemessage = data.message?.content || "";
+        break;
+      }
+
       messages.push({
-        role:"assistant",
-        content:data.message.content||"",
-        tool_calls:toolCalls
-      })
-       
-        const toolCall = toolCalls[0]
-        const toolName=toolCall.function.name;
-        const args = toolCall.function.arguments
-      
+        role: "assistant",
+        content: data.message.content || "",
+        tool_calls: toolCalls
+      });
+
+      const toolCall = toolCalls[0];
+      const toolName = toolCall.function.name;
+      const args = toolCall.function.arguments;
       let result;
-      
+
       if (toolName === "searchCode") {
-         result = await searchCode(
-          args.query,
-          repositoryId
-        )
-        for(const item of result){
-          knownPath.add(item.path)
+        result = await searchCode(args.query, repositoryId);
+
+        for (const item of result) {
+          knownPath.add(item.path);
         }
-      }else if(toolName==="readFile"){
+      } else if (toolName === "readFile") {
         if (!knownPath.has(args.filePath)) {
           result = {
             error: `Invalid file path: ${args.filePath}. The path was not returned by searchCode.`
+          };
+        } else {
+          result = await readFile(workspace, args.filePath);
         }
-        }else{
-          result=await readFile(workspace,args.filePath)
-        }
-        }else if(toolName==="editFile"){
-          if(knownPath.has(args.filePath)){
-          result=await editFile(workspace,args.filePath,args.oldCode,args.newCode)
-          }else{
-            result = {
-              error: `Invalid file path: ${args.filePath}. The path was not returned by searchCode.`
+      } else if (toolName === "editFile") {
+        if (knownPath.has(args.filePath)) {
+          result = await editFile(
+            workspace,
+            args.filePath,
+            args.oldCode,
+            args.newCode
+          );
+
+          if (!result?.error) {
+            changedFiles.add(args.filePath);
           }
-          }
-        }else{
+        } else {
           result = {
-            error: `Unknown tool: ${toolName}`
+            error: `Invalid file path: ${args.filePath}. The path was not returned by searchCode.`
           };
         }
-      // console.log(JSON.stringify(data, null, 2));
-      // if(Toolcall){
-      //   const toolName = Toolcall.function.name;
-      // const args = Toolcall.function.arguments;
-      
-     
-      
-        console.log("Search result:", result);
-        
-        console.log(JSON.stringify(data, null, 2));  
-        console.log("Tool:", toolName);
-  console.log("Result:", result);
+      } else {
+        result = {
+          error: `Unknown tool: ${toolName}`
+        };
+      }
 
-  messages.push({
-    role: "tool",
-    content: JSON.stringify(result),
-    tool_call_id: toolCall.id
-  });
-  const GitDiff = await getDiff(workspace)
-  console.log(GitDiff)
-  if(GitDiff){
-    console.log(`code editted`)
-  }else{
-    console.log(`error code edit`)
-  }
-  
-  const commit = gitCommit(args.files ,userMessage)
-}
-console.log("Messages:", JSON.stringify(messages, null, 2));
-      }else{
-      console.log("Repository not cloned")
-      return
+      console.log("Tool:", toolName);
+      console.log("Result:", result);
+
+      messages.push({
+        role: "tool",
+        content: JSON.stringify(result),
+        tool_call_id: toolCall.id
+      });
     }
-  
 
+    const GitDiff = await getDiff(workspace);
+    console.log(GitDiff);
+
+    if (!GitDiff) {
+      return {
+        success: true,
+        message: valuemessage || "No code changes were made."
+      };
+    }
+
+    console.log("Code edited");
+
+    const files = Array.from(changedFiles);
+
+    if (files.length === 0) {
+      return {
+        success: false,
+        message: "Changes detected, but no edited files were tracked.",
+        diff: GitDiff
+      };
+    }
+
+    const commit = await gitCommit(files, userMessage, workspace);
+
+    if (!commit.success) {
+      return {
+        success: false,
+        message: "Commit failed",
+        diff: GitDiff
+      };
+    }
+
+    const push = await gitPush("origin", branchName, workspace);
+
+    if (!push.success) {
+      return {
+        success: false,
+        message: "Push failed",
+        diff: GitDiff
+      };
+    }
+
+    const pr = await createPullRequest(
+      owner,
+      repositoryName,
+      branchName,
+      "main",
+      `CodeAtlas: ${userMessage}`,
+      "Changes generated by the CodeAtlas coding agent."
+    );
+
+    if (!pr.success) {
+      console.error("PR creation failed:", pr.message);
+
+      return {
+        success: false,
+        message: pr.message,
+        diff: GitDiff,
+        commit
+      };
+    }
+
+    console.log("Pull request:", pr.url);
+
+    return {
+      success: true,
+      message: valuemessage,
+      diff: GitDiff,
+      commit,
+      pullRequest: pr.url
+    };
+  } else {
+    console.log("Repository not cloned");
+
+    return {
+      success: false,
+      message: "Repository not cloned"
+    };
   }
-
-
-    // run(
-    //   "edit the post organisation route in the trello backend repository and change the status code to 600",
-    //   90,
-    //   "/tmp/codeatlas/your-workspace",
-    //   "https://github.com/GaneshDeshmane/Trello-Backend"
-    // );
+}
