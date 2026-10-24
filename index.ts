@@ -1,4 +1,5 @@
 import agentRouter from "./routes/agent";
+import { agentRunRouter } from "./agent/agent";
 import ingestRouter from "./routes/ingest";
 import {userRouter} from "./routes/user";
 import "dotenv/config";
@@ -37,6 +38,7 @@ app.use(
   app.use(passport.session());
 
   
+app.use('/agents',agentRunRouter)
 app.use('/agent',agentRouter)
 app.use('/ingestion',ingestRouter)
 app.use('/', userRouter);

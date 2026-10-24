@@ -75,3 +75,33 @@ export async function askAgent(repository: string, question: string): Promise<Ag
   }
   return data as AgentResponse;
 }
+const AGENT_URL = "http://localhost:3001/agents/run"
+
+export type AgentResult = {
+  success: boolean;
+  message?: string;
+  diff?: string;
+  commit?: { success?: boolean; [key: string]: unknown };
+  pullRequest?: string;
+};
+
+export async function runAgentTask(repository: string, task: string): Promise<AgentResult> {
+  const res = await fetch(AGENT_URL, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ repository, task }),
+  });
+
+  let data: AgentResult | null = null;
+  try {
+    data = (await res.json()) as AgentResult;
+  } catch {
+   
+  }
+
+  if (!res.ok && !data) {
+    throw new Error(`Agent request failed (${res.status})`);
+  }
+  return data ?? { success: false, message: "Empty response from agent" };
+}

@@ -1,4 +1,7 @@
-
+import { Router } from "express";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { searchCode } from "./tools";
 import { readFile } from "./tools";
 import { repositoryTool } from "../gitservice/service/repositoryTool";
@@ -10,6 +13,7 @@ import { gitPush } from "../gitservice/service/push";
 import { createPullRequest } from "../gitservice/service/pull";
 import { message } from "./systemPrompt";
 import { tools } from "./toolPrompt";
+import { prisma } from "../db/db";
 
 console.log("OLLAMA_API:", process.env.OLLAMA_API);
 
@@ -96,7 +100,7 @@ export async function run(
       let result;
 
       if (toolName === "searchCode") {
-        result = await searchCode(args.query, repositoryId);
+        result = await searchCode(repository,repositoryId);
 
         for (const item of result) {
           knownPath.add(item.path);
@@ -222,3 +226,81 @@ export async function run(
     };
   }
 }
+
+ async function findRepositoryId(repositoryName: string): Promise<number | null>{
+  const repositoryId=await prisma.repository.findFirst({
+    where:{
+      name:repositoryName
+    },
+    select:{
+      id:true
+    }
+  })
+  if (!repositoryId) {
+    throw new Error("findRepositoryId is not implemented");
+  }
+  return repositoryId.id
+ }
+
+export const agentRunRouter = Router();
+
+agentRunRouter.post("/run", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Not signed in" });
+  }
+
+  const { repository, task } = req.body ?? {};
+  if (typeof repository !== "string" || typeof task !== "string" || !task.trim()) {
+    return res.status(400).json({ success: false, message: "repository and task are required" });
+  }
+
+  let url: URL;
+  try {
+    url = new URL(repository.trim());
+  } catch {
+    return res.status(400).json({ success: false, message: "Invalid repository URL" });
+  }
+
+  const [owner, rawName] = url.pathname.split("/").filter(Boolean);
+  if (url.hostname !== "github.com" || !owner || !rawName) {
+    return res.status(400).json({ success: false, message: "Enter a valid https://github.com/owner/repo URL" });
+  }
+
+  const repositoryName = rawName.replace(/\.git$/, "");
+  const repositoryUrl = `https://github.com/${owner}/${repositoryName}`;
+
+  req.setTimeout(0);
+  res.setTimeout(0);
+
+  let workspace: string | null = null;
+
+  try {
+     const repositoryId = await findRepositoryId(repositoryUrl);
+
+     if (repositoryId == null) {
+       return res.status(409).json({ success: false, message: "Ingest this repository first, then run the agent." });
+     }
+
+    workspace = await fs.mkdtemp(path.join(os.tmpdir(), "codeatlas-"));
+
+    const result = await run(
+      task.trim(),
+      // repositoryName,
+      workspace,
+      repositoryUrl,
+      task.trim(),
+      owner,
+      repositoryName
+    );
+
+    return res.json(result);
+  } catch (err) {
+    console.error("Agent run failed:", err);
+    return res.status(500).json({
+      success: false,
+      message: err instanceof Error ? err.message : "Agent run failed"
+    });
+  } finally {
+    if (workspace) fs.rm(workspace, { recursive: true, force: true }).catch(() => {});
+  }
+});

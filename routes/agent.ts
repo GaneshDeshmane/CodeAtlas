@@ -62,14 +62,16 @@ agentRouter.post('/', async function (req, res) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                model: 'llama3.2:1b',
+                model: 'qwen3.5:4b',
                 prompt,
                 stream: false
             })
         })
         if (!ollamaResponse.ok) {
+            console.log(ollamaResponse.status)
             throw new Error(`Ollama error: ${ollamaResponse.status}`)
         }
+
         const data = await ollamaResponse.json() as {response: string}
         return res.json({
             answer: data.response,
