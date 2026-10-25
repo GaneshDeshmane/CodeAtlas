@@ -236,10 +236,11 @@ export async function run(
       id:true
     }
   })
-  if (!repositoryId) {
-    throw new Error("findRepositoryId is not implemented");
-  }
-  return repositoryId.id
+  return repositoryId?.id ??null
+  // if (!repositoryId) {
+  //   throw new Error("findRepositoryId is not implemented");
+  // }
+  
  }
 
 export const agentRunRouter = Router();
@@ -275,7 +276,7 @@ agentRunRouter.post("/run", async (req, res) => {
   let workspace: string | null = null;
 
   try {
-     const repositoryId = await findRepositoryId(repositoryUrl);
+     const repositoryId = await findRepositoryId(repositoryName);
 
      if (repositoryId == null) {
        return res.status(409).json({ success: false, message: "Ingest this repository first, then run the agent." });
@@ -285,7 +286,7 @@ agentRunRouter.post("/run", async (req, res) => {
 
     const result = await run(
       task.trim(),
-      // repositoryName,
+      repositoryId,
       workspace,
       repositoryUrl,
       task.trim(),

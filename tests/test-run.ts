@@ -1,5 +1,5 @@
 
-import { run } from "./agent/agent";
+import { run } from "../agent/agent";
 
 async function testRun() {
   const result = await run(
